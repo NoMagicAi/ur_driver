@@ -1,0 +1,2684 @@
+# Copyright (c) 2017, OptoForce Ltd.
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 1. Redistributions of source code must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the
+#    documentation and/or other materials provided with the distribution.
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgement:
+#    This product includes software developed by the OptoForce Ltd.
+# 4. Neither the name of the OptoForce Ltd nor the
+#    names of its contributors may be used to endorse or promote products
+#    derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY OPTOFORCE LTD ''AS IS'' AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL OPTOFORCE LTD BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  
+  # begin: URCap Installation Node
+  #   Source: OptoForce Force Torque Sensor, 3.0.0, OptoForce Ltd.
+  #   Type: OptoForce Setup
+  of_p_j = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  of_r = [0.0, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+  def of_c_o(l, c, o):
+  i = 0
+  while (i < c):
+  p = p[l[i * 6 + 0], l[i * 6 + 1], l[i * 6 + 2], l[i * 6  + 3], l[i * 6 + 4], l[i * 6 + 5]]
+  r_p = pose_add(p, o)
+  j_p = get_inverse_kin(r_p, of_p_j)
+  of_p_j = j_p
+  of_r[i * 6 + 0] = j_p[0]
+  of_r[i * 6 + 1] = j_p[1]
+  of_r[i * 6 + 2] = j_p[2]
+  of_r[i * 6 + 3] = j_p[3]
+  of_r[i * 6 + 4] = j_p[4]
+  of_r[i * 6 + 5] = j_p[5]
+  i = i + 1
+  end
+  return of_r
+  end
+  of_sensor_IP="{{OPTOFORCE_IP}}"
+  of_rotation_degree=0
+  #==============================================================================================================#
+  #================================== Start of OptoForce Pop-up Messages ========================================#
+  #==============================================================================================================#
+  
+  # @package of_popup_messages
+  #	Documentation for the OptoForce Pop-up Messages
+  #
+  #	OptoForce Pop-up Messages
+  #
+  #	@version 0.1
+  #
+  #	@note Changelog:
+  #
+  #	@date 20171019
+  
+  #=========================================================#
+  
+  ## UR Pop-up character limits:
+  #   Title: 31 characters
+  #   Message: 255 characters
+  #       - New line with <br>, which counts 4 characters.
+  
+  
+  #=========================#
+  #===  OptoForce Debug  ===#
+  
+  OF_DEBUG_GLOBAL = False
+  
+  OF_DEBUG_CMD = True
+  OF_DEBUG_TX = True
+  OF_DEBUG_RX = True
+  OF_DEBUG_STATE = True
+  OF_DEBUG_VAR = False
+  
+  #===  End of OptoForce Debug  ===#
+  #================================#
+  
+  
+  #========================================================#
+  #===  OptoForce App Engine Interface Pop-up Messages  ===#
+  
+  ## Pop-up Messages for 'portProvider'
+  of_ce_comm_error_title = "OptoForce - Communication error"
+  of_ce_comm_portprovider_open_error = "Socket portProvider opening was unsuccessful. Ensure that the Compute Box is operational, and check the status in the OptoForce Setup page in the Installation Tab."
+  of_ce_comm_portprovider_allocate_error = "Port number was not allocated to this robot by the Compute Engine! Exiting.."
+  of_ce_comm_vectorstream_open_error = "Socket vectorStream opening was unsuccessfull"
+  of_ce_comm_vectorstream_packet_error = "Socket vectorStream packet error. Ensure that the Compute Box is operational, and check the status in the OptoForce Setup page in the Installation Tab."
+  of_ce_comm_appcommands_open_error = "Socket appCommands opening was unsuccessfull"
+  of_ce_comm_safeguard_lost_error = "Connection was lost with the Compute Engine, program stopped. Restart the Compute Box, and check the status in the OptoForce Setup page in the Installation Tab."
+  
+  
+  of_ce_comm_cmd_send_error = "Command sending to the Compute Box failed. Resending. Command: " # <command #>
+  of_ce_comm_cmd_send_again = "Try to send command again.."   # !!!
+  of_ce_comm_int_send_error = "Integer sending to the Compute Box failed. Resending. Integer: " # <integer>
+  of_ce_comm_int_send_again = "Try to send int again.."
+  of_ce_comm_float_send_error = "Float sending to the Compute Box failed. Resending. Float: " # <float>"
+  of_ce_comm_float_send_again = "Try to send float as int again.."
+  of_ce_comm_dummy_send_error = "Dummy sending to the Compute Box failed. Resending. [Counter, out of]: " # <tomb>"
+  of_ce_comm_dummy_send_again = "Try to send dummy again.."
+  
+  ## Pop-up Messages for 'thread vectorProcess_thread()'
+  of_sensor_error_title = "OptoForce - Sensor error"
+  of_sensor_error_bit0 = "No sensor connected.<br>Turn off the Compute Box, connect the sensor to the Compute Box with an undamaged cable, turn on the Compute Box. If the error persists, contact your distributor."
+  of_sensor_error_bit1 = "Sensor is not responding.<br>Turn off the Compute Box, connect the sensor to the Compute Box with an undamaged cable, turn on the Compute Box. If the error persists, contact your distributor."
+  of_sensor_error_bit2 = "Sensor failure.<br>Gather information about the situation in which this error occurred, and contact your distributor."
+  of_sensor_error_bit3 = "Sensor power or EEPROM error.<br>Gather information about the situation in which this error occurred, and contact your distributor, or OptoForce."
+  of_sensor_error_bit4 = "Communication error between the sensor and the Compute Box.<br>Turn off the Compute Box, connect the sensor to the Compute Box with an undamaged cable, turn on the Compute Box. If the error persists, contact your distributor."
+  of_sensor_error_bit5 = "Sensor force overload error.<br>Eliminate the circumstances that cause the sensor to be overloaded, that is, offload the sensor."
+  of_sensor_error_bit6 = "Sensor torque overload error.<br>Eliminate the circumstances that cause the sensor to be overloaded, that is, offload the sensor."
+  of_sensor_error_bit7 = "Sensor error.<br>Contact your distributor."
+  of_sensor_error_else = "Unknown sensor error(s).<br>Connect to the Compute Box Web Access, and analize the STATUS word. Refer to the Compute Box Description on the OptoForce USB drive."
+  
+  ## Pop-up Messages for 'CMD TX'
+  of_cmd_error_title = "OptoForce - Command error"
+  of_ft_control_start_error = "Do not include a F/T Control command under another F/T Control command."
+  
+  #============================#
+  #===  Command - F/T Move  ===#
+  
+  ## @brief Move the robot to the desired pose.
+      #
+      #   The command tries to keep the side-forces and all torques zero and push the pin in the hole with constant force in the direction of the Z axis of the Tool coordinate system.
+      #    @param silent Disables the (blocking) pop-up messages. Set to False to allow pop-up messages in case of exceptions. Set to True to disable pop-up messages, in this case you can only conclude the success or failure of the function from the return values. This is suitable for embedded function calls. [Boolean] Default: False
+      #    @return The fuction return with the result of the command.
+      #    @retval 0 The Insert Pin command reached the maximal distance.
+  
+  of_move_error_title = "OptoForce - F/T Move error"
+  of_move_init_error = "Wrong F/T Move status when initializing.<br>Another thread is using an F/T Move command. Program stopped."
+  of_move_start_error = "Wrong F/T Move status when starting.<br>Another thread is using an F/T Move command. Program stopped."
+  of_move_parameter_error_coordsys = "Parameter error.<br>Unknown coordinate system. Program stopped."
+  of_move_parameter_error_speed = "Parameter error.<br>Invalid value for the speed parameter. Program stopped."
+  of_move_parameter_error_acc = "Parameter error.<br>Invalid value for the acc parameter. Program stopped."
+  of_move_parameter_error_wpcount = "Parameter error.<br>No F/T Waypoint added to the F/T Move. Program stopped."
+  
+  
+  of_move_return_title = "OptoForce - F/T Move"
+  of_move_return_0 = "The move ended without detecting a force or torque greater than the set limit."
+  of_move_return_1 = "The move ended, because a force or torque greater than the set limit was detected."
+  of_move_return_2 = "The move cannot start due to a force or torque exceeding the set limit."
+  of_search_return_0 = "The search ended successfully, because a force or torque greater than the set limit was detected."
+  of_search_return_1 = "The search ended without detecting a force or torque greater than the set limit."
+  of_search_return_2 = "The search cannot start due to a force or torque exceeding the set limit."
+  
+  of_waypoint_error_title = "OptoForce - F/T Move Waypoint error"
+  of_waypoint_parameter_error_target = "Parameter error.<br>Please define a valid target pose or relative movement."
+  of_waypoint_parameter_error_frame = "Parameter error.<br>Unknown coordinate system."
+  of_waypoint_parameter_error_close = "Parameter error.<br>The given pose is too close to the last one. Program stopped."
+  
+  
+  #===  End of Command - F/T Move  ===#
+  #===================================#
+  
+  #===  End of OptoForce App Engine Interface Pop-up Messages  ===#
+  #===============================================================#
+  
+  
+  #================================================#
+  #===  OptoForce Applications Pop-up Messages  ===#
+  
+  #=================================#
+  #===  Command - FT Insert Pin  ===#
+  
+  ## @brief Inserts a pin in a hole.
+      #
+      #   The command tries to keep the side-forces and all torques zero and push the pin in the hole with constant force in the direction of the Z axis of the Tool coordinate system.
+      #   This script ends when the distZ is reached or other exit criteria is met.
+      #   For expert users: The FT PID controller's Integral and Derivative gain can be modified by the following variables: !!!
+      #   of_fpid_i_pin, of_fpid_d_pin, of_tpid_i_pin, of_tpid_d_pin; Defaults: 0.0 !!!
+      #    @param minDistZ The minimal distance the pin has to reach, also the distance after which the bump is expected. [m]
+  	#    @param maxDistZ The maximal distance the pin is allowed to reach. [m]
+      #    @param forceZ The insertion tries to maintain this force in the direction of the Z axis of the Tool coordinate system. This limits the amount of force acting on the end of the pin during pushing, but this may be exceeded at the bump. [N]
+      #    @param compliance The Tool X,Y,Rx,Ry,Rz-axis compliance. Set to true to allow complience in the direction of the axis. Set to False, to disable. List of 6 [Boolean], the third value is ignored)
+      #    @param expSpeed The minimal expected movement speed during the insertion as ongoing. Set to 0 to disable this exit criteria. [m/s] !!!
+      #    @param deltaForce The additional force at bump, on top of 'forceZ'. [N]
+      #    @param timeOut The maximal allowed length of time for the whole insertion function. Set 0 to disable this exit criteria. [s] Default: 0
+  	#	 @param FTLimits The maximum side force and torque along the non-compliant force and torque axes of the compliance param. [N, Nm] [Fx, Fy, DC, Tx, Ty, Tz] (DC: Don't care) !!!
+      #    @param PGainF The Force Controller's proportional gain. [-] !!!
+      #    @param PGainT The Torque Controller's proportional gain. [-] !!!
+      #    @param silent Disables the (blocking) pop-up messages. Set to False to allow pop-up messages in case of exceptions. Set to True to disable pop-up messages, in this case you can only conclude the success or failure of the function from the return values. This is suitable for embedded function calls. [Boolean] Default: False
+      #    @return The fuction return with the result of the command.
+      #    @retval 0 The Insert Pin command reached the maximal distance.
+      #    @retval 1 The Insert Pin command exited at a bump after the minimal insertion depth.
+      #    @retval 2 The Insert Pin command got stuck after the minimal insertion depth. Insertion is slower than required.
+      #    @retval 3 The Insert Pin command got stuck before the minimal insertion depth. Insertion is slower than required.
+      #    @retval 4 The Insert Pin command exited with timeout after the minimal insertion depth.
+      #    @retval 5 The Insert Pin command exited with timeout before the minimal insertion depth.
+      #    @retval 6 The Insert Pin command exited due to too high side-forces/-torques at the non-compliant axes after the minimal insertion depth.
+      #    @retval 7 The Insert Pin command exited due to too high side-forces/-torques at the non-compliant axes before the minimal insertion depth.
+      #    @retval 8 The Insert Pin command has a parameter error.
+  
+      # pinRet = 8
+      of_pin_insertion_param_error_title = "OptoForce - Insert Pin error"
+      of_pin_insertion_param_error_minDistZ = "Please define parameter 'minDistZ' as a positive real number in meters!"
+      of_pin_insertion_param_error_forceZ = "Please define parameter 'forceZ' as a positive number in Newtons!"
+      of_pin_insertion_param_error_maxDistZ = "Please define parameter 'maxDistZ' as a positive real number in meters!"
+      of_pin_insertion_param_error_maxDistZ_minDistZ = "Please define the parameters as 'maxDistZ' >= 'minDistZ'!"
+      of_pin_insertion_param_error_expSpeed = "Please define parameter 'expSpeed' as a positive real number in meters!"
+      of_pin_insertion_param_error_deltaForce = "Please define parameter 'deltaForce' as a positive number in Newtons!"
+      of_pin_insertion_param_error_timeOut = "Please define parameter 'timeOut' as a positive number in seconds!"
+      of_pin_insertion_param_error_FTLimits = "Please define parameter 'FTLimits' as a 6-element array of positive numbers in Newtons & Newton-meters!"
+      # of_pin_insertion_param_error_maxSideF = "Please define parameter 'maxSideF' as a positive number in Newtons!"
+      # of_pin_insertion_param_error_maxSideT = "Please define parameter 'maxSideT' as a positive number in Newton-meters!"
+      of_pin_insertion_param_error_PGainF = "Please define parameter 'PGainF' as a positive real number!"
+      of_pin_insertion_param_error_PGainT = "Please define parameter 'PGainT' as a positive real number!"
+      # of_pin_insertion_param_error_PGain = "Please define parameter 'PGain' as a positive real number!"
+  
+      of_pin_insertion_exit_title = "OptoForce - Insert Pin"
+      # pinRet = 7
+      of_pin_insertion_exit_maxSideFT = "The side-force/-torque limit has been reached before the minimal insertion depth."
+  	# pinRet = 6
+      of_pin_insertion_exit_maxSideFT = "The side-force/-torque limit has been reached after the minimal insertion depth."
+      # pinRet = 5
+      of_pin_insertion_exit_timeOut = "The command has timed out before the minimal insertion depth."
+  	# pinRet = 4
+      of_pin_insertion_exit_timeOut = "The command has timed out after the minimal insertion depth."
+      # pinRet = 3
+      of_pin_insertion_exit_deltaD = "The insertion got stuck before the minimal insertion depth."
+  
+  #===  End of Command - FT Insert Pin  ===#
+  #========================================#
+  
+  
+  #=============================#
+  #===  Command - FT Center  ===#
+  
+  of_center_title = "OptoForce - FT Center"
+  of_center_return_0 = "Arrived successfully to the center point."
+  of_center_return_1 = "The first boundary search was unsuccessful. Movement reached the distance limit."
+  of_center_return_2 = "The second boundary search was unsuccessful. Movement reached the distance limit."
+  of_center_return_3 = "Could not reach the center point. The tool collided during the movement."
+  of_center_return_4 = "The search has not been started because of the conditions."
+  of_center_return_5 = "The second search has not been started because of the conditions."
+  of_center_return_99 = "Do not define more than one directional parameter."
+  
+  #===  End of Command - FT Center  ===#
+  #====================================#
+  
+  #==================================#
+  #===  Command - of_center_RxRy  ===#
+  
+  of_center_rxry_title = "OptoForce - Orientation center"
+  of_center_rxry_return_0 = "The Orientation centerpoint search was successful"
+  of_center_rxry_return_1 = "The Orientation centerpoint search of Rx was unsuccessful!"
+  of_center_rxry_return_2 = "The Orientation centerpoint search of Ry was unsuccessful!"
+  
+  #===  End of Command - of_ceter_RxRy  ===#
+  #========================================#
+  
+  #===================================#
+  #===  Command - FT Fix & Rotate  ===#
+  
+  of_fix_and_rotate_title = "OptoForce - FT Fix & Rotate"
+  of_fix_and_rotate_param_error = "Parameter error: rotateEndSearch!"
+  of_fix_and_rotate_return_0 = ""
+  of_fix_and_rotate_return_21 = "The rotation was unsuccessful, collision occurred."
+  of_fix_and_rotate_return_22 = "The rotation ended without contact."
+  
+  #===  End of Command - FT Fix & Rotate  ===#
+  #==========================================#
+  
+  #==================================#
+  #===  Command - FT Insert Box  ===#
+  
+  of_box_ins_title = "OptoForce - FT Insert Box"
+  of_box_ins_return_0 = "The Box Insertion finished with no error"
+  of_box_ins_return_1 = "The first direction search was unsuccessful. Movement reached the distance limit."
+  of_box_ins_return_2 = "The second direction search was unsuccessful. Movement reached the distance limit."
+  of_box_ins_return_3 = "The tilt back movement was unsuccessful. Collision occurred."
+  of_box_ins_return_4 = "The tilt movement was unsuccessful. Collision occurred."
+  of_box_ins_return_5 = "The box stuck during the insertion state while center pointing of the X axis! Please check the position and orientation."
+  of_box_ins_return_6 = "The box stuck during the insertion state while center pointing of the Y axis! Please check the position and orientation."
+  of_box_ins_return_7 = "The box stuck during the insertion state while center pointing of the Z axis! Please check the position and orientation."
+  of_box_ins_return_8 = "The box cannot be inserted to position, too many collisions occurred. Please check the position and orientation."
+  
+  #===  End of Command - FT Insert Box  ===#
+  #=========================================#
+  
+  #====================================#
+  #===  Command - FT Stack/Destack  ===#
+  
+  of_stacking_title = "OptoForce - FT Stack/Destack"
+  of_stacking_param_error_dir = "Please define only one direction parameter!"
+  of_stacking_param_error_itmax = "The 'it_max' parameter cannot be greather than the distance/thickness!"
+  of_stacking_param_error_thickness = "The 'thickness' parameter cannot be zero when 'it_max' is not zero!"
+  of_stacking_return_0 = "The FT Stack/Destack finished successfully"
+  of_stacking_return_1_stack = "The iteration counter is over the maximum: the stack is full."
+  of_stacking_return_1_destack = "The iteration counter is over the maximum: the stack is empty."
+  of_stacking_return_2 = "Stacking/Destacking is unsuccessful. Next item not found."
+  of_stacking_return_3 = "Stacking/Destacking cannot start due to a force or torque exceeding the set limit."
+  of_stacking_return_4 = "The movement to the next element was unsuccessful, a collision occurred."
+  of_stacking_return_5 = "The movement to the starting point was unsuccessful, a collision occurred."
+  of_stacking_param_error_thickness = "The 'thickness' parameter cannot be zero when 'it_max' is not zero!" # return 990
+  of_stacking_param_error_dir = "Please define only one direction parameter!" # return 991-994
+  of_stacking_param_error_itmax = "The 'it_max' parameter cannot be greather than the distance/thickness!" # return 995
+  
+  #===  End of Command - FT Stack/Destack  ===#
+  #===========================================#
+  
+  #===  End of OptoForce Applications Pop-up Messages  ===#
+  #=======================================================#
+  
+  
+  #============================================================================================================#
+  #================================== End of OptoForce Pop-up Messages ========================================#
+  #============================================================================================================#
+  #===============================================#
+  #======    Start of OptoForce Elements    ======#
+  #===============================================#
+  MATH_PI=3.141593
+  bFT=[0,0,0,0,0,0]
+  tFT=[0,0,0,0,0,0]
+  ZEROPOSE=p[0,0,0,0,0,0]
+  def of_qu_inv(qu):
+  return[qu[0],-qu[1],-qu[2],-qu[3]]
+  end
+  def of_qu_mult(x,y):
+  local qa=x[0]*y[0]-x[1]*y[1]-x[2]*y[2]-x[3]*y[3]
+  local qb=x[0]*y[1]+x[1]*y[0]+x[2]*y[3]-x[3]*y[2]
+  local qc=x[0]*y[2]-x[1]*y[3]+x[2]*y[0]+x[3]*y[1]
+  local qd=x[0]*y[3]+x[1]*y[2]-x[2]*y[1]+x[3]*y[0]
+  local retVal=[qa,qb,qc,qd]
+  return retVal
+  end
+  def of_rotvec2qu(rv):
+  local rvlen=sqrt(rv[0]*rv[0]+rv[1]*rv[1]+rv[2]*rv[2])
+  if rvlen!=0:
+  local rv4=[rvlen,rv[0]/rvlen,rv[1]/rvlen,rv[2]/rvlen]
+  else:
+  local rv4=[0,0,0,0]
+  end
+  local rvs=sin(rv4[0]/2)
+  return[cos(rv4[0]/2),rvs*rv4[1],rvs*rv4[2],rvs*rv4[3]]
+  end
+  def of_rotate_qu(v,q):
+  local v4=[0,v[0],v[1],v[2]]
+  local r4a=of_qu_mult(q,v4)
+  local r4b=of_qu_inv(q)
+  local r4=of_qu_mult(r4a,r4b)
+  return[r4[1],r4[2],r4[3]]
+  end
+  def of_pose_add(tt,ss,base=True):
+  if base:
+  local rr=pose_add(tt,ss)
+  else:
+  local rr=pose_trans(tt,ss)
+  end
+  return rr
+  end
+  def of_move_set_parent(parentID):
+  end
+  def of_threshold(fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,force_abs=True,base=True):
+  local is_above_the_threshold=False
+  def check_limit(force,limit,fabs):
+  if limit!=0:
+  if(fabs)and norm(force)>=norm(limit):
+  return True
+  elif(not fabs)and((limit<0 and force<=limit)or(limit>0 and force>=limit)):
+  return True
+  else:
+  return False
+  end
+  else:
+  return False
+  end
+  end
+  if base:
+  local compareFT=bFT
+  else:
+  local compareFT=tFT
+  end
+  if(check_limit(compareFT[0],fx,force_abs)):
+  is_above_the_threshold=True
+  end
+  if(check_limit(compareFT[1],fy,force_abs)):
+  is_above_the_threshold=True
+  end
+  if(check_limit(compareFT[2],fz,force_abs)):
+  is_above_the_threshold=True
+  end
+  if(check_limit(compareFT[3],tx,force_abs)):
+  is_above_the_threshold=True
+  end
+  if(check_limit(compareFT[4],ty,force_abs)):
+  is_above_the_threshold=True
+  end
+  if(check_limit(compareFT[5],tz,force_abs)):
+  is_above_the_threshold=True
+  end
+  if f3d!=0 and norm(F3D)>=norm(f3d):
+  is_above_the_threshold=True
+  end
+  if t3d!=0 and norm(T3D)>=norm(t3d):
+  is_above_the_threshold=True
+  end
+  return is_above_the_threshold
+  end
+  def of_above_zero(fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,zeroVal=0,base=True):
+  local is_above_the_threshold=False
+  def check_zero(force,axis,limit):
+  if axis!=0:
+  if(force>limit):
+  return True
+  else:
+  return False
+  end
+  else:
+  return False
+  end
+  end
+  if base:
+  local compareFT=bFT
+  else:
+  local compareFT=tFT
+  end
+  if(check_zero(compareFT[0],fx,zeroVal)):
+  is_above_the_threshold=True
+  end
+  if(check_zero(compareFT[1],fy,zeroVal)):
+  is_above_the_threshold=True
+  end
+  if(check_zero(compareFT[2],fz,zeroVal)):
+  is_above_the_threshold=True
+  end
+  if(check_zero(compareFT[3],tx,zeroVal)):
+  is_above_the_threshold=True
+  end
+  if(check_zero(compareFT[4],ty,zeroVal)):
+  is_above_the_threshold=True
+  end
+  if(check_zero(compareFT[5],tz,zeroVal)):
+  is_above_the_threshold=True
+  end
+  return is_above_the_threshold
+  end
+
+  of_go_new_pos=p[0,0,0,0,0,0]
+  of_go_acc=0
+  of_go_speed=0
+  of_go_thread_flag=-1
+  of_joint_move=False
+  of_go_time=0
+  of_go_blend=0
+  of_joint_move=False
+  of_go_thread_handler=0
+
+  thread of_go_thread():
+      if of_joint_move:
+          movej(of_go_new_pos,a=of_go_acc,v=of_go_speed)
+      else:
+          movel(of_go_new_pos,a=of_go_acc,v=of_go_speed)
+      end
+      of_go_thread_flag= 1
+  end
+
+  def of_go(of_go_target,fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,speed=0.03,acc=1.2,brake=1.2,force_abs=True,base=True,joint_move=False,contact_or_suck=False):
+      sync()
+
+      of_go_new_pos=of_go_target
+      of_go_acc=acc
+      of_go_speed=speed
+      of_joint_move=joint_move
+      of_go_thread_flag=0
+      sync()
+
+      if of_threshold(fx,fy,fz,tx,ty,tz,f3d,t3d,force_abs,base)==False and (not contact_or_suck or get_standard_digital_in(1) == False):
+          of_go_thread_flag=0
+          of_go_thread_handler=run of_go_thread()
+          sync()
+
+          while(of_go_thread_flag==0):
+              if of_threshold(fx,fy,fz,tx,ty,tz,f3d,t3d,force_abs,base)==False and (not contact_or_suck or get_standard_digital_in(1) == False):
+                  sync()
+              else:
+                  kill of_go_thread_handler
+                  if of_joint_move:
+                      stopj(brake)
+                  else:
+                      stopl(brake)
+                  end
+                  of_go_thread_flag=2
+              end
+          end
+      end
+
+      return of_go_thread_flag
+  end
+
+  def of_merge_poses(target,x,y,z,rx,ry,rz,base=True):
+  if target==p[0,0,0,0,0,0]:
+  if(x!=0 or y!=0 or z!=0 or rx!=0 or ry!=0 or rz!=0):
+  local actpos=get_actual_tcp_pose()
+  sync()
+  local merged=of_pose_add(actpos,p[x,y,z,-rx,-ry,-rz],base)
+  sync()
+  return merged
+  else:
+  popup("Please define a valid target pose or relative movement!",title="OptoForce",error=True,blocking=False)
+  halt
+  end
+  else:
+  if(x==0 and y==0 and z==0 and rx==0 and ry==0 and rz==0):
+  return target
+  else:
+  popup("Please define only one valid target pose or relative movement!",title="OptoForce",error=True,blocking=False)
+  halt
+  end
+  end
+  end
+  def of_merge_check(target,x,y,z,rx,ry,rz,base=True):
+  if target==p[0,0,0,0,0,0]:
+  if(x!=0 or y!=0 or z!=0 or rx!=0 or ry!=0 or rz!=0):
+  return True
+  else:
+  popup("Please define a valid target pose or relative movement!",title="OptoForce",error=True,blocking=True)
+  return False
+  end
+  else:
+  if(x==0 and y==0 and z==0 and rx==0 and ry==0 and rz==0):
+  return True
+  else:
+  popup("Please define only one valid target pose or relative movement!",title="OptoForce",error=True,blocking=True)
+  return False
+  end
+  end
+  end
+  of_ftpid_p_pith=0.2
+  of_ftpid_i_pith=0.0
+  of_ftpid_d_pith=0.0
+  of_ftpid_p_pith_default=0.2
+  of_ftpid_i_pith_default=0.0
+  of_ftpid_d_pith_default=0.0
+  of_fpid_i_pin=0.0
+  of_fpid_d_pin=0.0
+  of_fpid_i_pin_default=0.0
+  of_fpid_d_pin_default=0.0
+  of_tpid_i_pin=0.0
+  of_tpid_d_pin=0.0
+  of_tpid_i_pin_default=0.0
+  of_tpid_d_pin_default=0.0
+  of_ftpid_i_conn=0.0
+  of_ftpid_d_conn=0.0
+  of_ftpid_i_conn_default=0.0
+  of_ftpid_d_conn_default=0.0
+  def of_center_RxRy(AngR,TorqueXY,spdR,stateCntr=0,silent=False,base=True):
+  sync()
+  local state=0+stateCntr
+  local retCVal=of_center(rx=AngR,t3d=TorqueXY,speed=spdR,acc=0.05,silent=True,base=base)
+  if(retCVal==0):
+  sync()
+  elif(retCVal==1):
+  state=1+stateCntr
+  local retMVal=of_move_ur(rx=-AngR,tx=TorqueXY,speed=spdR,acc=0.05,silent=True,force_abs=False,base=base)
+  if not silent:
+  popup(of_center_rxry_return_1,title=of_center_rxry_title,error=True,blocking=True)
+  end
+  return 1
+  elif(retCVal==2):
+  state=2+stateCntr
+  local retMVal=of_move_ur(rx=AngR,tx=-TorqueXY,speed=spdR,acc=0.05,silent=True,force_abs=False,base=base)
+  if not silent:
+  popup(of_center_rxry_return_1,title=of_center_rxry_title,error=True,blocking=True)
+  end
+  return 1
+  else:
+  state=3+stateCntr
+  if not silent:
+  popup(of_center_rxry_return_1,error=True,blocking=True)
+  end
+  return 1
+  end
+  state=3+stateCntr
+  retCVal=of_center(ry=AngR,t3d=TorqueXY,speed=spdR,acc=0.05,silent=True,base=base)
+  if(retCVal==0):
+  sync()
+  elif(retCVal==1):
+  state=4+stateCntr
+  sync()
+  local retMVal=of_move_ur(ry=-AngR,ty=TorqueXY,speed=spdR,acc=0.05,silent=True,force_abs=False,base=base)
+  if not silent:
+  popup(of_center_rxry_return_2,title=of_center_rxry_title,error=True,blocking=True)
+  end
+  return 2
+  elif(retCVal==2):
+  state=5+stateCntr
+  local retMVal=of_move_ur(ry=AngR,ty=-TorqueXY,speed=spdR,acc=0.05,silent=True,force_abs=False,base=base)
+  if not silent:
+  popup(of_center_rxry_return_2,title=of_center_rxry_title,error=True,blocking=True)
+  end
+  return 2
+  else:
+  state=3+stateCntr
+  if not silent:
+  popup(of_center_rxry_return_2,title=of_center_rxry_title,error=True,blocking=True)
+  end
+  return 2
+  end
+  return 0
+  end
+  of_peakFzScanner_flag=False
+  min_bFT=[0,0,0,0,0,0]
+  min0_bFT=[False,False,False,False,False,False]
+  max_bFT=[0,0,0,0,0,0]
+  max0_bFT=[False,False,False,False,False,False]
+  abs_bFT=[0,0,0,0,0,0]
+  abs0_bFT=[False,False,False,False,False,False]
+  min_tFT=[0,0,0,0,0,0]
+  min0_tFT=[False,False,False,False,False,False]
+  max_tFT=[0,0,0,0,0,0]
+  max0_tFT=[False,False,False,False,False,False]
+  abs_tFT=[0,0,0,0,0,0]
+  abs0_tFT=[False,False,False,False,False,False]
+  min_3DFT=[0,0]
+  min0_3DFT=[False,False]
+  max_3DFT=[0,0]
+  max0_3DFT=[False,False]
+  thread of_peakFzScanner():
+  of_peakFzScanner_flag=True
+  abs_tFT[2]=0
+  while(of_peakFzScanner_flag==True):
+  i=0
+  norm_tFT2=norm(tFT[2])
+  if abs0_tFT[2]:
+  abs_tFT[2]=0
+  abs0_tFT[2]=False
+  elif(abs_tFT[2]<norm_tFT2):
+  abs_tFT[2]=norm_tFT2
+  end
+  sync()
+  end
+  return False
+  end
+  of_bi_cp_x_inv=False
+  of_bi_cp_y_inv=False
+  of_bi_cp_z_inv=False
+  of_stack_curr_it=0
+  def of_rotational_search(force,depth,surface,resolution,torque,speed=0.01,speedR=0.1,acc=0.2,silent=False):
+  local base=False
+  force=-norm(force)
+  depth=norm(depth)
+  local incr=2* MATH_PI/norm(resolution)
+  local lastR=-0
+  local currR=0
+  textmsg("Params: ",[force,depth,incr,currR])
+  local startPose=get_actual_tcp_pose()
+  local nextPose=startPose
+  while(norm(currR)<=(MATH_PI)):
+  local retT=of_move_ur(z=depth,fz=force,speed=speed,acc=acc,brake=1000,silent=True,force_abs=True,base=base)
+  if(retT==1):
+  local holePose=of_pose_add(nextPose,p[0,0,depth*surface,0,0,0],base)
+  local retF=of_move_ur(target=holePose,fz=-force,speed=speed,acc=acc,brake=1000,silent=True,force_abs=False,base=base)
+  if(retF!=1):
+  if not silent:
+  popup("Collision occured during the moveback mevement!",title="OptoForce",error=True,blocking=True)
+  end
+  return 4
+  else:
+  return 0
+  end
+  elif(retT==2):
+  local retM=of_move_ur(target=nextPose,fz=-force,speed=speed,acc=acc,brake=1000,silent=True,force_abs=False,base=base)
+  if(retM!=1):
+  if not silent:
+  popup("Collision occured during the moveback mevement!",title="OptoForce",error=True,blocking=True)
+  end
+  return 2
+  end
+  if(-lastR==currR):
+  lastR=currR
+  if(currR<0):
+  currR=currR-incr
+  else:
+  currR=currR+incr
+  end
+  else:
+  lastR=currR
+  currR=-currR
+  end
+  nextPose=of_pose_add(startPose,p[0,0,0,0,0,currR],base)
+  local retR=of_move_ur(target=nextPose,tz=torque,speed=speedR,acc=acc,brake=1000,silent=True,force_abs=True,base=base)
+  if(retR!=1):
+  if not silent:
+  popup("Collision occured during the rotational mevement!",title="OptoForce",error=True,blocking=True)
+  end
+  return 3
+  end
+  else:
+  if not silent:
+  popup("The try movement can not been started!",title="OptoForce",error=True,blocking=True)
+  end
+  return 1
+  end
+  end
+  if not silent:
+  popup("The rotational search was unsuccessful with this resolution!",title="OptoForce",error=True,blocking=True)
+  end
+  return 5
+  end
+  def of_wait_ms(time_ms):
+  local sync_time=norm(time_ms/8.0)
+  while(sync_time>0):
+  sync_time=sync_time-1
+  sync()
+  end
+  end
+  def of_tcp_offset_calc():
+  local act_flange=get_actual_tool_flange_pose()
+  local act_tcp=get_actual_tcp_pose()
+  local tcp_offset=pose_trans(pose_inv(act_flange),act_tcp)
+  return tcp_offset
+  end
+  #=============================================#
+  #======    End of OptoForce Elements    ======#
+  #=============================================#
+  #===========================================================#
+  #======    Start of OptoForce App Engine Interface    ======#
+  #===========================================================#
+  global Fx=0
+  global Fy=0
+  global Fz=0
+  global Tx=0
+  global Ty=0
+  global Tz=0
+  global F3D=0
+  global T3D=0
+  global bFT=[0,0,0,0,0,0]
+  global tFT=[0,0,0,0,0,0]
+  global of_return=0
+  global of_compute_engine_ping=0
+  global of_compute_engine_ping_max=0
+  of_compute_engine_IP=""
+  OF_APP_ENGINE_PORT=0
+  of_portnum_appCommands=0
+  of_portnum_vectorStream=0
+  of_v2r_received=0
+  of_cmd_received=0
+  of_sg_count=0
+  of_pn_data=[0,0,0]
+  of_appvect=[0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+  of_dataAVFT=[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+  of_data=[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+  of_sensor_status=0
+  of_cmd_rx=[0,0,0]
+  of_ack_received=False
+  of_speedl_thread_handler=0
+  of_speedl_is_running=False
+  of_speedl_acc=0
+  of_speedl_for_limit=False
+  of_speedl_for_ftcontrol=False
+  of_speedl_for_move=False
+  of_speedl_for_handguide=False
+  of_limit_return=0
+  of_ft_control_return=0
+  of_move_return=0
+  of_path_return=0
+  of_ft_control_state=0
+  of_move_state=0
+  of_hg_caranteen_reached=False
+  of_hg_caranteen_safemode=False
+  of_hg_enable_axes=[False,False,False,False,False,False]
+  of_hg_axisZ_extra_dist=0
+  of_hg_axisZ_min_dist=0
+  of_hg_axisZ_dist=0
+  of_hg_TMB_dist=0
+  of_hg_joints_min_dev=0
+  of_hg_stop_F=0
+  of_hg_stop_T=0
+  of_move_frameID=0
+  of_move_frame=p[0,0,0,0,0,0]
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  of_move_last_pose=p[0,0,0,0,0,0]
+  of_move_wp_count=0
+  of_move_min_dist=0
+  of_portopened_portProvider=False
+  of_portopened_vectorStream=False
+  of_portopened_appCommands=False
+  OF_APP_ENGINE_PING_LIMIT=19
+  OF_APP_ENGINE_PORT=7466
+  OF_SCALE_FLOAT=1000000
+  of_speedl_acc=10000.0
+  of_move_min_dist=0.001
+  of_hg_axisZ_extra_dist=0.06
+  of_hg_axisZ_min_dist=0.163941
+  of_hg_axisZ_dist=of_hg_axisZ_min_dist+of_hg_axisZ_extra_dist
+  of_hg_TMB_dist=0.0922
+  of_hg_joints_min_dev=d2r(0.5)
+  OF_CMD_ACK=0
+  OF_CMD_STOP=1
+  OF_CMD_START=2
+  OF_CMD_BIAS=3
+  OF_CMD_TCP=4
+  OF_CMD_SENSOR_CONFIG=5
+  OF_CMD_COG=6
+  OF_CMD_LIMIT=7
+  OF_CMD_FT_CONTROL=8
+  OF_CMD_HAND_GUIDE=9
+  OF_CMD_MOVE=10
+  OF_CMD_WAYPOINT=11
+  OF_CMD_PATH=12
+  OF_CMD_DIO=13
+  OF_CMD_AIO=14
+  OF_CMD_TX_PARAM_LENGTH=20
+  OF_DUMMY_VALUE=-1
+  OF_FT_CONTROL_STATE_IDLE=0
+  OF_FT_CONTROL_STATE_RUNNING=1
+  OF_MOVE_STATE_IDLE=0
+  OF_MOVE_STATE_INIT=1
+  OF_MOVE_STATE_GLOBALS_SET=2
+  OF_MOVE_STATE_PARAM_SEND=3
+  OF_MOVE_STATE_PARAM_SENT=4
+  OF_MOVE_STATE_INITED=5
+  OF_MOVE_STATE_STARTING=6
+  OF_MOVE_STATE_WP_SENT=7
+  OF_MOVE_STATE_STARTED=8
+  OF_MOVE_STATE_RETURNING=9
+  OF_MOVE_STATE_FINISHED=10
+  of_compute_engine_IP=of_sensor_IP
+  def of_portclose_portProvider():
+  socket_close("portProvider")
+  of_portopened_portProvider=False
+  end
+  def of_portopen_portProvider():
+  of_portclose_portProvider()
+  of_portopened_portProvider=socket_open(of_compute_engine_IP,OF_APP_ENGINE_PORT,"portProvider")
+  if not of_portopened_portProvider:
+  popup(of_ce_comm_portprovider_open_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  halt
+  end
+  end
+  def of_float_to_int(value):
+  if value>(2147483647/OF_SCALE_FLOAT):
+  textmsg("Float to int overflow!",value)
+  value=2147483647/OF_SCALE_FLOAT
+  elif value<(-2147483648/OF_SCALE_FLOAT):
+  textmsg("Float to int underflow!",value)
+  value=-2147483648/OF_SCALE_FLOAT
+  end
+  return value*OF_SCALE_FLOAT
+  end
+  def of_int_to_float(value):
+  return value/OF_SCALE_FLOAT
+  end
+  def of_portclose_vectorStream():
+  socket_close("vectorStream")
+  of_portopened_vectorStream=False
+  end
+  def of_portopen_vectorStream():
+  of_portclose_vectorStream()
+  of_portopened_vectorStream=socket_open(of_compute_engine_IP,of_portnum_vectorStream,"vectorStream")
+  if not of_portopened_vectorStream:
+  popup(of_ce_comm_vectorstream_open_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  halt
+  end
+  end
+  thread vectorStream_thread():
+  if OF_DEBUG_STATE:
+  textmsg("Starting vectorStream thread")
+  end
+  while of_portopened_vectorStream:
+  of_data=socket_read_ascii_float(13,"vectorStream")
+  if of_data[0]==13:
+  of_dataAVFT=of_data
+  of_v2r_received=of_v2r_received+1
+  else:
+  popup(of_ce_comm_vectorstream_packet_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  textmsg("Received: ",of_data)
+  halt
+  end
+  end
+  if OF_DEBUG_STATE:
+  textmsg("Stopping vectorStream thread")
+  end
+  end
+  thread vectorProcess_thread():
+  if OF_DEBUG_STATE:
+  textmsg("Starting vectorProcess thread")
+  end
+  while of_portopened_vectorStream:
+  sync()
+  of_appvect[0]=of_dataAVFT[1]
+  of_appvect[1]=of_dataAVFT[2]
+  of_appvect[2]=of_dataAVFT[3]
+  of_appvect[3]=of_dataAVFT[4]
+  of_appvect[4]=of_dataAVFT[5]
+  of_appvect[5]=of_dataAVFT[6]
+  Fx=of_dataAVFT[7]
+  Fy=of_dataAVFT[8]
+  Fz=of_dataAVFT[9]
+  Tx=of_dataAVFT[10]
+  Ty=of_dataAVFT[11]
+  Tz=of_dataAVFT[12]
+  of_sensor_status=floor(of_dataAVFT[13]+0.5)
+  local sensor_status_bits=integer_to_binary_list(of_sensor_status)
+  if(of_sensor_status!=0):
+  if sensor_status_bits[0]:
+  popup(of_sensor_error_bit0,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[1]:
+  popup(of_sensor_error_bit1,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[2]:
+  popup(of_sensor_error_bit2,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[3]:
+  popup(of_sensor_error_bit3,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[4]:
+  popup(of_sensor_error_bit4,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[5]:
+  popup(of_sensor_error_bit5,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[6]:
+  popup(of_sensor_error_bit6,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if sensor_status_bits[7]:
+  popup(of_sensor_error_bit7,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  if of_sensor_status>255:
+  popup(of_sensor_error_else,title=of_sensor_error_title,error=True,blocking=False)
+  end
+  textmsg("Sensor error! Error code: ",of_sensor_status)
+  halt
+  end
+  F3D=sqrt(Fx*Fx+Fy*Fy+Fz*Fz)
+  T3D=sqrt(Tx*Tx+Ty*Ty+Tz*Tz)
+  local act_transform=get_actual_tcp_pose()
+  act_transform[0]=0
+  act_transform[1]=0
+  act_transform[2]=0
+  bF=pose_trans(act_transform,p[Fx,Fy,Fz,0,0,0])
+  bT=pose_trans(act_transform,p[Tx,Ty,Tz,0,0,0])
+  bFT=[bF[0],bF[1],bF[2],bT[0],bT[1],bT[2]]
+  tFT=[Fx,Fy,Fz,Tx,Ty,Tz]
+  of_appvect[6]=of_v2r_received
+  end
+  if OF_DEBUG_STATE:
+  textmsg("Stopping vectorProcess thread")
+  end
+  end
+  def get_of_appvect():
+  return[of_appvect[0],of_appvect[1],of_appvect[2],of_appvect[3],of_appvect[4],of_appvect[5]]
+  end
+  def get_of_appvect_pose():
+  return p[of_appvect[0],of_appvect[1],of_appvect[2],of_appvect[3],of_appvect[4],of_appvect[5]]
+  end
+  thread safeguard_thread():
+  if OF_DEBUG_STATE:
+  textmsg("SafeGuard thread starting..")
+  end
+  while of_portopened_vectorStream:
+  sync()
+  of_sg_count=of_sg_count+1
+  of_compute_engine_ping=of_sg_count-of_v2r_received
+  if of_compute_engine_ping>OF_APP_ENGINE_PING_LIMIT:
+  textmsg(of_ce_comm_safeguard_lost_error)
+  popup(of_ce_comm_safeguard_lost_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  halt
+  end
+  if of_compute_engine_ping>of_compute_engine_ping_max:
+  of_compute_engine_ping_max=of_compute_engine_ping
+  end
+  of_sg_count=of_sg_count-0.05*of_compute_engine_ping
+  end
+  if OF_DEBUG_STATE:
+  textmsg("SafeGuard thread stopped")
+  end
+  end
+  def of_portclose_appCommands():
+  socket_close("appCommands")
+  of_portopened_appCommands=False
+  end
+  def of_portopen_appCommands():
+  of_portclose_appCommands()
+  of_portopened_appCommands=socket_open(of_compute_engine_IP,of_portnum_appCommands,"appCommands")
+  if not of_portopened_appCommands:
+  popup(of_ce_comm_appcommands_open_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  halt
+  end
+  end
+  def of_send_command(command):
+  sync()
+  if OF_DEBUG_CMD or OF_DEBUG_TX:
+  textmsg("Sending command: ",command)
+  end
+  succ=socket_send_int(command,"appCommands")
+  if not succ:
+  if OF_DEBUG_STATE:
+  textmsg(of_ce_comm_cmd_send_error,command)
+  popup(of_ce_comm_cmd_send_again,title=of_ce_comm_error_title,error=True,blocking=False)
+  end
+  sync()
+  of_send_command(command)
+  end
+  end
+  def of_send_int(intvalue):
+  if OF_DEBUG_TX:
+  textmsg("Sending integer: ",intvalue)
+  end
+  local succ=socket_send_int(intvalue,"appCommands")
+  if not succ:
+  if OF_DEBUG_STATE:
+  textmsg(of_ce_comm_int_send_error,intvalue)
+  popup(of_ce_comm_int_send_again,title=of_ce_comm_error_title,error=True,blocking=False)
+  end
+  sync()
+  of_send_int(intvalue)
+  end
+  end
+  def of_send_float_as_int(floatvalue):
+  local value=of_float_to_int(floatvalue)
+  if OF_DEBUG_TX:
+  textmsg("Sending [float, as int]: ",[floatvalue,value])
+  end
+  local succ=socket_send_int(value,"appCommands")
+  if not succ:
+  if OF_DEBUG_STATE:
+  textmsg(of_ce_comm_float_send_error,floatvalue)
+  popup(of_ce_comm_float_send_again,title=of_ce_comm_error_title,error=True,blocking=False)
+  end
+  sync()
+  of_send_float_as_int(floatvalue)
+  end
+  end
+  def of_send_dummies(count):
+  if OF_DEBUG_TX:
+  textmsg("Sending dummies: ",count)
+  end
+  local counter=0
+  while counter<count:
+  local succ=socket_send_int(OF_DUMMY_VALUE,"appCommands")
+  if not succ:
+  if OF_DEBUG_STATE:
+  textmsg(of_ce_comm_dummy_send_error,[(counter+1),count])
+  popup(of_ce_comm_dummy_send_again,title=of_ce_comm_error_title,error=True,blocking=False)
+  end
+  counter=counter-1
+  sync()
+  end
+  counter=counter+1
+  end
+  end
+  thread of_speedl_thread():
+  if OF_DEBUG_STATE:
+  textmsg("Speedl stream started..")
+  end
+  enter_critical
+  of_speedl_is_running=True
+  exit_critical
+  speedbase=[0,0,0,0,0,0]
+  if of_speedl_for_handguide:
+  while of_speedl_is_running:
+  speedbase=get_of_appvect()
+  if of_hg_caranteen_reached:
+  if of_hg_caranteen_safemode:
+  local XYplane=get_actual_tool_flange_pose()
+  if(XYplane[0]<0 and speedbase[0]>0)or(XYplane[0]>0 and speedbase[0]<0):
+  speedbase[0]=0
+  end
+  if(XYplane[1]<0 and speedbase[1]>0)or(XYplane[1]>0 and speedbase[1]<0):
+  speedbase[1]=0
+  end
+  else:
+  speedbase=[0,0,0,0,0,0]
+  end
+  end
+  speedl(speedbase,a=of_speedl_acc,t=0.001)
+  end
+  else:
+  while of_speedl_is_running:
+  speedbase=get_of_appvect()
+  speedl(speedbase,a=of_speedl_acc,t=0.001)
+  end
+  end
+  if OF_DEBUG_STATE:
+  textmsg("Speedl stream ended.")
+  end
+  end
+  def of_speedl_stop_for(stopLimit=False,stopFTControl=False,stopMove=False,stopHandGuide=False):
+  if(not stopLimit)and(not stopFTControl)and(not stopMove)and(not stopHandGuide):
+  textmsg("No atomic command has been stopped")
+  end
+  if stopLimit:
+  of_speedl_for_limit=False
+  end
+  if stopFTControl:
+  of_speedl_for_ftcontrol=False
+  end
+  if stopMove:
+  of_speedl_for_move=False
+  end
+  if stopHandGuide:
+  of_speedl_for_handguide=False
+  end
+  if not(of_speedl_for_limit or of_speedl_for_ftcontrol or of_speedl_for_move or of_speedl_for_handguide):
+  kill of_speedl_thread_handler
+  enter_critical
+  of_speedl_is_running=False
+  exit_critical
+  if OF_DEBUG_STATE:
+  textmsg("Speedl stream stopped")
+  end
+  stopl(10)
+  end
+  return of_speedl_is_running
+  end
+  def of_hg_stop_limit_reached():
+  local is_reached=False
+  if(of_hg_enable_axes[0]and(Fx>of_hg_stop_F)):
+  is_reached=True
+  elif(of_hg_enable_axes[1]and(Fy>of_hg_stop_F)):
+  is_reached=True
+  elif(of_hg_enable_axes[2]and(Fz>of_hg_stop_F)):
+  is_reached=True
+  elif(of_hg_enable_axes[3]and(Tx>of_hg_stop_T)):
+  is_reached=True
+  elif(of_hg_enable_axes[4]and(Ty>of_hg_stop_T)):
+  is_reached=True
+  elif(of_hg_enable_axes[5]and(Tz>of_hg_stop_T)):
+  is_reached=True
+  end
+  return is_reached
+  end
+  def of_hg_stop_area_reached():
+  local is_reached=False
+  local Zzero=p[0,0,0,0,0,0]
+  local XYplane=p[0,0,0,0,0,0]
+  local act_flange=get_actual_tool_flange_pose()
+  local act_joints=get_actual_joint_positions()
+  XYplane[0]=act_flange[0]
+  XYplane[1]=act_flange[1]
+  local qWrist2=act_joints[4]%MATH_PI
+  local dist2Z=point_dist(XYplane,Zzero)
+  local dist2Z_min=of_hg_axisZ_dist+(of_hg_TMB_dist*cos(act_joints[4]))
+  if(dist2Z<dist2Z_min):
+  of_hg_caranteen_reached=True
+  elif(dist2Z>dist2Z_min+0.01):
+  of_hg_caranteen_reached=False
+  of_hg_caranteen_safemode=False
+  end
+  if(norm(qWrist2)<of_hg_joints_min_dev):
+  is_reached=True
+  end
+  return is_reached
+  end
+  def of_wait_for_ACK(timeout=0):
+  local timeout_sync_max=timeout*125
+  local timeout_sync=0
+  local timedOut=False
+  if timeout>=0:
+  useTimeout=True
+  else:
+  useTimeout=False
+  end
+  syncCounter=0
+  enter_critical
+  local ackReceived=of_ack_received
+  exit_critical
+  while((not ackReceived)and(not timedOut)):
+  sync()
+  if useTimeout:
+  timeout_sync=timeout_sync+1
+  if timeout_sync>timeout_sync_max:
+  timedOut=True
+  end
+  end
+  enter_critical
+  ackReceived=of_ack_received
+  exit_critical
+  end
+  enter_critical
+  of_ack_received=False
+  exit_critical
+  end
+  def of_ack_send():
+  if OF_DEBUG_STATE:
+  textmsg("Acknowledge sending started..")
+  end
+  of_send_command(OF_CMD_ACK)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-0)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("Acknowledge sent")
+  end
+  end
+  def of_stop_atomic(stopLimit=False,stopFTControl=False,stopMove=False,stopHandGuide=False):
+  if(not stopLimit)and(not stopFTControl)and(not stopMove):
+  textmsg("No atomic command has been stopped")
+  end
+  local stopFTControlOrHandGuide=stopFTControl or stopHandGuide
+  if OF_DEBUG_STATE:
+  textmsg("Stop Atomic sending.. ",[stopLimit,stopFTControl,stopMove,stopHandGuide])
+  end
+  if stopFTControl:
+  of_ft_control_state=OF_FT_CONTROL_STATE_IDLE
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  end
+  if stopHandGuide:
+  of_ft_control_state=OF_FT_CONTROL_STATE_IDLE
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  end
+  of_cmd_stop_arg=binary_list_to_integer([stopLimit,stopFTControlOrHandGuide,stopMove])
+  of_send_command(OF_CMD_STOP)
+  of_send_int(of_cmd_stop_arg)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  of_speedl_stop_for(stopLimit,stopFTControl,stopMove,stopHandGuide)
+  if OF_DEBUG_STATE:
+  textmsg("Stop Atomic sent: ",of_cmd_stop_arg)
+  end
+  return of_speedl_is_running
+  end
+  def of_start_atomic(startLimit=False,startFTControl=False,startMove=False,startHandGuide=False):
+  if(not startLimit)and(not startFTControl)and(not startMove)and(not startHandGuide):
+  textmsg("No atomic command has been started")
+  end
+  if startLimit:
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (Limit) sending..")
+  end
+  of_send_command(OF_CMD_START)
+  of_send_int(OF_CMD_LIMIT)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  of_speedl_for_limit=True
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (Limit) sent")
+  end
+  end
+  if startFTControl:
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (FTControl) sending..")
+  end
+  of_send_command(OF_CMD_START)
+  of_send_int(OF_CMD_FT_CONTROL)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  of_speedl_for_ftcontrol=True
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (FTControl) sent")
+  end
+  end
+  if startMove:
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (Move) sending..")
+  end
+  of_send_command(OF_CMD_START)
+  of_send_int(OF_CMD_MOVE)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  of_speedl_for_move=True
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (Move) sent")
+  end
+  end
+  if startHandGuide:
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (FTControl) sending..")
+  end
+  of_send_command(OF_CMD_START)
+  of_send_int(OF_CMD_FT_CONTROL)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  of_speedl_for_handguide=True
+  if OF_DEBUG_STATE:
+  textmsg("Start Atomic (HandGuide) sent")
+  end
+  end
+  if(of_speedl_for_limit or of_speedl_for_ftcontrol or of_speedl_for_move or of_speedl_for_handguide):
+  if not of_speedl_is_running:
+  of_speedl_thread_handler=run of_speedl_thread()
+  end
+  end
+  return of_speedl_is_running
+  end
+  def of_ft_bias():
+  if OF_DEBUG_STATE:
+  textmsg("FT Bias sending...")
+  end
+  of_send_command(OF_CMD_BIAS)
+  of_send_int(0)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-1)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("FT Bias sent.")
+  end
+  end
+  def of_tcp_offset_send():
+  if OF_DEBUG_STATE:
+  textmsg("TCP Offset sending started!")
+  end
+  local TCP_offset=of_tcp_offset_calc()
+  of_send_command(OF_CMD_TCP)
+  of_send_float_as_int(TCP_offset[0])
+  of_send_float_as_int(TCP_offset[1])
+  of_send_float_as_int(TCP_offset[2])
+  of_send_float_as_int(TCP_offset[3])
+  of_send_float_as_int(TCP_offset[4])
+  of_send_float_as_int(TCP_offset[5])
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-6)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("TCP Offset sent.")
+  end
+  end
+  def of_sensor_config_send(sensorFlangeOffset=p[0,0,0,0,0,0],sensorTCPOffset=p[0,0,0,0,0,0]):
+  if OF_DEBUG_STATE:
+  textmsg("Sensor Config sending started!")
+  end
+  of_send_command(OF_CMD_TCP)
+  of_send_float_as_int(sensorFlangeOffset[0])
+  of_send_float_as_int(sensorFlangeOffset[1])
+  of_send_float_as_int(sensorFlangeOffset[2])
+  of_send_float_as_int(sensorFlangeOffset[3])
+  of_send_float_as_int(sensorFlangeOffset[4])
+  of_send_float_as_int(sensorFlangeOffset[5])
+  of_send_float_as_int(sensorTCPOffset[0])
+  of_send_float_as_int(sensorTCPOffset[1])
+  of_send_float_as_int(sensorTCPOffset[2])
+  of_send_float_as_int(sensorTCPOffset[3])
+  of_send_float_as_int(sensorTCPOffset[4])
+  of_send_float_as_int(sensorTCPOffset[5])
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-12)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("Sensor Config sent.")
+  end
+  end
+  def of_cog_send(robot_mount=[0,0],center_of_gravity=[0,0,0],payload=0):
+  if OF_DEBUG_STATE:
+  textmsg("Robot mount, Center of Gravity & Payload sending started!")
+  end
+  of_send_command(OF_CMD_TCP)
+  of_send_float_as_int(robot_mount[0])
+  of_send_float_as_int(robot_mount[1])
+  of_send_float_as_int(center_of_gravity[0])
+  of_send_float_as_int(center_of_gravity[1])
+  of_send_float_as_int(center_of_gravity[2])
+  of_send_float_as_int(payload)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-6)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("Robot mount, Center of Gravity & Payload sent.")
+  end
+  end
+  def of_limit_start(ft_select=[False,False,False,False,False,False,False,False],ft_limits=[0,0,0,0,0,0,0,0],ft_abs=[False,False,False,False,False,False],timeout=0,v_min=0,frameID=0,frameRPY=[0,0,0],forFTControl=False,popupmsg=True):
+  local binary_list=integer_to_binary_list(0)
+  local iBin=0
+  while iBin<15:
+  if iBin<6:
+  binary_list[iBin]=ft_abs[iBin]
+  elif iBin<(6+8):
+  binary_list[iBin]=ft_select[iBin-6]
+  elif iBin==14:
+  binary_list[iBin]=forFTControl
+  else:
+  sync()
+  end
+  iBin=iBin+1
+  end
+  local int_bool_list=binary_list_to_integer(binary_list)
+  local frame_rotvec=rpy2rotvec(frameRPY)
+  of_send_command(OF_CMD_LIMIT)
+  of_send_float_as_int(ft_limits[0])
+  of_send_float_as_int(ft_limits[1])
+  of_send_float_as_int(ft_limits[2])
+  of_send_float_as_int(ft_limits[3])
+  of_send_float_as_int(ft_limits[4])
+  of_send_float_as_int(ft_limits[5])
+  of_send_float_as_int(ft_limits[6])
+  of_send_float_as_int(ft_limits[7])
+  of_send_int(int_bool_list)
+  of_send_float_as_int(timeout)
+  of_send_float_as_int(v_min)
+  of_send_int(frameID)
+  of_send_float_as_int(frame_rotvec[0])
+  of_send_float_as_int(frame_rotvec[1])
+  of_send_float_as_int(frame_rotvec[2])
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-15)
+  of_wait_for_ACK()
+  end
+  def of_limit_stop(forFTControl=False):
+  of_stop_atomic(stopLimit=True)
+  end
+  def of_ft_control_start(ft_select=[False,False,False,False,False,False],ft_values=[0.0,0.0,0.0,0.0,0.0,0.0],frameID=0,frameRPY=[0,0,0],forcePID=[1.0,0.0,0.0],torquePID=[1.0,0.0,0.0],deviation_max=0):
+  if not(of_ft_control_state==OF_FT_CONTROL_STATE_IDLE):
+  popup(of_ft_control_start_error,title=of_cmd_error_title,error=True,blocking=False)
+  of_ft_control_state=of_ft_control_state+1
+  else:
+  of_ft_control_state=OF_FT_CONTROL_STATE_RUNNING
+  end
+  local flags=binary_list_to_integer(ft_select)+(frameID*64)
+  local frame_rotvec=rpy2rotvec(frameRPY)
+  if OF_DEBUG_STATE:
+  textmsg("Start force mode")
+  end
+  of_send_command(OF_CMD_FT_CONTROL)
+  of_send_float_as_int(ft_values[0])
+  of_send_float_as_int(ft_values[1])
+  of_send_float_as_int(ft_values[2])
+  of_send_float_as_int(ft_values[3])
+  of_send_float_as_int(ft_values[4])
+  of_send_float_as_int(ft_values[5])
+  of_send_int(flags)
+  of_send_float_as_int(frame_rotvec[0])
+  of_send_float_as_int(frame_rotvec[1])
+  of_send_float_as_int(frame_rotvec[2])
+  of_send_float_as_int(forcePID[0])
+  of_send_float_as_int(forcePID[1])
+  of_send_float_as_int(forcePID[2])
+  of_send_float_as_int(torquePID[0])
+  of_send_float_as_int(torquePID[1])
+  of_send_float_as_int(torquePID[2])
+  of_send_float_as_int(deviation_max)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-17)
+  of_wait_for_ACK()
+  of_speedl_for_ftcontrol=True
+  if not of_speedl_is_running:
+  of_speedl_thread_handler=run of_speedl_thread()
+  end
+  if frameID==0 or frameID==1 or frameID==2 or frameID==3:
+  of_move_parent_frameID=frameID
+  of_move_parent_frame=p[0,0,0,frame_rotvec[0],frame_rotvec[1],frame_rotvec[2]]
+  else:
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  end
+  if OF_DEBUG_STATE:
+  textmsg("FT Control started")
+  end
+  end
+  def of_ft_control_stop():
+  of_stop_atomic(stopFTControl=True)
+  of_ft_control_state=OF_FT_CONTROL_STATE_IDLE
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  end
+  def of_hand_guide_start(axes_en=[False,False,False,False,False,False],thresholdF=15,thresholdT=0.6,saturationV=0.6,saturationW=0.2,stopF=100,stopT=5,gainF=1,gainT=1):
+  if OF_DEBUG_STATE:
+  textmsg("Starting hand guide")
+  end
+  local Axes_en=binary_list_to_integer(axes_en)
+  if OF_DEBUG_VAR:
+  textmsg("Axes_en: ",Axes_en)
+  end
+  of_hg_stop_F=stopF
+  of_hg_stop_T=stopT
+  of_send_command(OF_CMD_HAND_GUIDE)
+  of_send_int(Axes_en)
+  of_send_float_as_int(thresholdF)
+  of_send_float_as_int(thresholdT)
+  of_send_float_as_int(saturationV)
+  of_send_float_as_int(saturationW)
+  of_send_float_as_int(stopF)
+  of_send_float_as_int(stopT)
+  of_send_float_as_int(gainF)
+  of_send_float_as_int(gainT)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-9)
+  of_wait_for_ACK()
+  of_speedl_for_handguide=True
+  if not of_speedl_is_running:
+  of_speedl_thread_handler=run of_speedl_thread()
+  end
+  if OF_DEBUG_STATE:
+  textmsg("HandGuide started")
+  end
+  end
+  def of_hand_guide_stop():
+  of_stop_atomic(stopHandGuide=True)
+  end
+  def of_move_init(frameID=0,frameRPY=[0,0,0],speed=0.05,acc=1.2,scale=False,move2First=True,move21Last=True):
+  sync()
+  if of_move_state!=OF_MOVE_STATE_IDLE:
+  popup(of_move_init_error,title=of_move_error_title,error=True,blocking=False)
+  halt
+  end
+  of_move_state=OF_MOVE_STATE_INIT
+  if OF_DEBUG_STATE:
+  textmsg("FT Move initializing..")
+  end
+  if not(speed>0):
+  popup(of_move_parameter_error_speed,title=of_move_error_title,error=True,blocking=False)
+  halt
+  elif not(acc>0):
+  popup(of_move_parameter_error_acc,title=of_move_error_title,error=True,blocking=False)
+  halt
+  else:
+  sync()
+  end
+  of_move_state=OF_MOVE_STATE_GLOBALS_SET
+  of_move_frameID=frameID
+  if frameID==0 or frameID==1:
+  of_move_frame=p[0,0,0,0,0,0]
+  elif frameID==2 or frameID==3:
+  frame_rotvec=rpy2rotvec(frameRPY)
+  of_move_frame=p[0,0,0,frame_rotvec[0],frame_rotvec[1],frame_rotvec[2]]
+  elif frameID==4:
+  parentID=of_move_parent_frameID
+  if parentID==0 or parentID==1 or parentID==2 or parentID==3:
+  of_move_frameID=of_move_parent_frameID
+  of_move_frame=of_move_parent_frame
+  else:
+  textmsg("Invalid of_move_parent_frameID, frame set to Base. Invalid ID: ",of_move_parent_frameID)
+  of_move_parent_frameID=0
+  of_move_parent_frame=p[0,0,0,0,0,0]
+  of_move_frameID=of_move_parent_frameID
+  of_move_frame=of_move_parent_frame
+  end
+  sync()
+  else:
+  popup(of_move_parameter_error_coordsys,title=of_move_error_title,error=True,blocking=False)
+  halt
+  end
+  of_move_wp_count=0
+  of_move_last_pose=get_actual_tcp_pose()
+  local flags=binary_list_to_integer([scale,move2First,move21Last])
+  of_move_state=OF_MOVE_STATE_PARAM_SEND
+  of_send_command(OF_CMD_MOVE)
+  of_send_float_as_int(speed)
+  of_send_float_as_int(acc)
+  of_send_int(of_move_frameID)
+  of_send_float_as_int(of_move_frame[3])
+  of_send_float_as_int(of_move_frame[4])
+  of_send_float_as_int(of_move_frame[5])
+  of_send_int(flags)
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-7)
+  of_move_state=OF_MOVE_STATE_PARAM_SENT
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("FT Move initialized")
+  end
+  of_move_state=OF_MOVE_STATE_INITED
+  sync()
+  end
+  def of_move_send_start():
+  of_start_atomic(startMove=True)
+  end
+  def of_move_start(isSearch=False,popupmsg=False):
+  sync()
+  if of_move_state!=OF_MOVE_STATE_INITED:
+  popup(of_move_start_error,title=of_move_error_title,error=True,blocking=False)
+  halt
+  end
+  of_move_state=OF_MOVE_STATE_STARTING
+  if not(of_move_wp_count>0):
+  popup(of_move_parameter_error_wpcount,title=of_move_error_title,error=True,blocking=False)
+  halt
+  else:
+  sync()
+  end
+  of_move_state=OF_MOVE_STATE_WP_SENT
+  of_move_send_start()
+  if OF_DEBUG_STATE:
+  textmsg("FT Move started")
+  end
+  of_move_state=OF_MOVE_STATE_STARTED
+  while of_move_state==OF_MOVE_STATE_STARTED:
+  sync()
+  end
+  of_speedl_stop_for(stopMove=True)
+  of_move_state=OF_MOVE_STATE_FINISHED
+  if isSearch:
+  local of_search_return=of_move_return
+  end
+  if of_move_return==0:
+  if isSearch:
+  of_search_return=2
+  if popupmsg:
+  popup(of_search_return_2,title=of_move_return_title,error=True,blocking=True)
+  end
+  end
+  elif of_move_return==1:
+  if isSearch:
+  of_search_return=0
+  if popupmsg:
+  popup(of_search_return_0,title=of_move_return_title,error=True,blocking=True)
+  end
+  elif popupmsg:
+  popup(of_move_return_1,title=of_move_return_title,error=True,blocking=True)
+  end
+  elif of_move_return==2:
+  if isSearch:
+  if popupmsg:
+  popup(of_search_return_2,title=of_move_return_title,error=True,blocking=True)
+  end
+  elif popupmsg:
+  popup(of_move_return_2,title=of_move_return_title,error=True,blocking=True)
+  end
+  else:
+  sync()
+  if isSearch:
+  textmsg("FT Search finished with unknown return value: ",of_search_return)
+  else:
+  textmsg("FT Move finished with unknown return value: ",of_move_return)
+  end
+  end
+  if OF_DEBUG_STATE:
+  if isSearch:
+  textmsg("FT Search finished with return value:",of_move_return)
+  else:
+  textmsg("FT Move finished with return value:",of_move_return)
+  end
+  end
+  of_move_state=OF_MOVE_STATE_IDLE
+  sync()
+  if isSearch:
+  return of_search_return
+  else:
+  return of_move_return
+  end
+  end
+  def of_move_limit_return(limit_return):
+  if limit_return==0:
+  of_move_return=0
+  elif limit_return==1:
+  of_move_return=1
+  else:
+  of_move_return=2
+  if OF_DEBUG_STATE:
+  textmsg("FT Move returned with limit_return: ",limit_return)
+  end
+  end
+  end
+  def of_move_stop():
+  of_stop_atomic(stopMove=True)
+  end
+  def of_waypoint_send(wp):
+  if not(wp==ZEROPOSE):
+  of_send_command(OF_CMD_WAYPOINT)
+  of_send_float_as_int(wp[0])
+  of_send_float_as_int(wp[1])
+  of_send_float_as_int(wp[2])
+  of_send_float_as_int(wp[3])
+  of_send_float_as_int(wp[4])
+  of_send_float_as_int(wp[5])
+  of_send_dummies(OF_CMD_TX_PARAM_LENGTH-6)
+  of_wait_for_ACK()
+  if OF_DEBUG_STATE:
+  textmsg("FT Waypoint sent: ",wp)
+  end
+  of_move_wp_count=of_move_wp_count+1
+  else:
+  textmsg("Invalid FT Waypoint and not sent")
+  end
+  end
+  def of_waypoint(fixP=p[0,0,0,0,0,0],variableP=p[0,0,0,0,0,0],relativeP=p[0,0,0,0,0,0]):
+  sync()
+  local mergedWP=ZEROPOSE
+  local startPose=ZEROPOSE
+  local frameID=of_move_frameID
+  local lastInCustom=p[0,0,0,0,0,0]
+  if of_move_state!=2:
+  sync()
+  end
+  if fixP==ZEROPOSE:
+  if variableP==ZEROPOSE:
+  if(relativeP==ZEROPOSE):
+  popup(of_waypoint_parameter_error_target,title=of_waypoint_error_title,error=True,blocking=False)
+  halt
+  end
+  if frameID==0:
+  startPose=of_move_last_pose
+  elif frameID==1:
+  startPose=ZEROPOSE
+  elif frameID==2:
+  startPose=pose_trans(pose_inv(of_move_frame),of_move_last_pose)
+  elif frameID==3:
+  startPose=pose_inv(of_move_frame)
+  else:
+  startPose=of_move_last_pose
+  end
+  else:
+  startPose=variableP
+  end
+  mergedCustom=pose_add(startPose,relativeP)
+  if frameID==0:
+  mergedWP=mergedCustom
+  elif frameID==1:
+  mergedWP= pose_trans(of_move_last_pose,mergedCustom)
+  elif frameID==2:
+  mergedWP=pose_trans(of_move_frame,mergedCustom)
+  elif frameID==3:
+  local customMerged=pose_trans(of_move_frame,mergedCustom)
+  mergedWP=pose_trans(of_move_last_pose,customMerged)
+  end
+  else:
+  mergedWP=fixP
+  end
+  local poseDiff=point_dist(mergedWP,of_move_last_pose)
+  if((of_move_wp_count!=0)and(poseDiff<of_move_min_dist)):
+  popup(of_waypoint_parameter_error_close,title=of_waypoint_error_title,error=True,blocking=False)
+  textmsg("Distance to the last pose: ",poseDiff)
+  halt
+  else:
+  of_waypoint_send(mergedWP)
+  end
+  of_move_last_pose=mergedWP
+  return mergedWP
+  end
+  def parse_command():
+  if of_cmd_rx[0]==0:
+  if OF_DEBUG_RX:
+  textmsg("Nothing received..")
+  end
+  elif of_cmd_rx[0]==1:
+  if OF_DEBUG_RX:
+  textmsg("Half command received: ",of_cmd_rx[1])
+  end
+  elif of_cmd_rx[0]==2:
+  if of_cmd_rx[1]==OF_CMD_ACK:
+  enter_critical
+  of_ack_received=True
+  exit_critical
+  if OF_DEBUG_RX:
+  textmsg("Acknowledge received")
+  end
+  elif of_cmd_rx[1]==OF_CMD_STOP:
+  brake=of_int_to_float(of_cmd_rx[2])
+  stopl(brake)
+  if OF_DEBUG_RX:
+  textmsg("Stop received: ",brake)
+  end
+  elif of_cmd_rx[1]==OF_CMD_START:
+  if OF_DEBUG_RX:
+  textmsg("Start(?) received. NOP ",of_cmd_rx[2])
+  end
+  elif of_cmd_rx[1]==OF_CMD_BIAS:
+  if OF_DEBUG_RX:
+  textmsg("FT Bias(?) received. NOP ",of_cmd_rx[2])
+  end
+  elif of_cmd_rx[1]==OF_CMD_TCP:
+  if OF_DEBUG_RX:
+  textmsg("TCP(?) received. NOP ",of_cmd_rx[2])
+  end
+  elif of_cmd_rx[1]==OF_CMD_SENSOR_CONFIG:
+  if OF_DEBUG_RX:
+  textmsg("Sensor Config(?) received. NOP ",of_cmd_rx[2])
+  end
+  elif of_cmd_rx[1]==OF_CMD_COG:
+  if OF_DEBUG_RX:
+  textmsg("COG(?) received. NOP ",of_cmd_rx[2])
+  end
+  elif of_cmd_rx[1]==OF_CMD_LIMIT:
+  of_limit_return=of_cmd_rx[2]
+  of_move_limit_return(of_limit_return)
+  if OF_DEBUG_RX:
+  textmsg("Limit return received: ",of_limit_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_FT_CONTROL:
+  of_ft_control_return=of_cmd_rx[2]
+  if OF_DEBUG_RX:
+  textmsg("FT Control return (?) received. NOP ",of_ft_control_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_HAND_GUIDE:
+  of_handguide_return=of_cmd_rx[2]
+  if OF_DEBUG_RX:
+  textmsg("HandGuide return (?) received. NOP ",of_handguide_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_MOVE:
+  of_move_return=of_cmd_rx[2]
+  of_move_state=OF_MOVE_STATE_RETURNING
+  if OF_DEBUG_RX:
+  textmsg("Return FT Move command received: ",of_move_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_WAYPOINT:
+  of_waypoint_return=of_cmd_rx[2]
+  if OF_DEBUG_RX:
+  textmsg("FT Waypoint Return (?) command received. NOP ",of_waypoint_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_PATH:
+  of_path_return=of_cmd_rx[2]
+  if OF_DEBUG_RX:
+  textmsg("Return FT Path command received: ",of_path_return)
+  end
+  elif of_cmd_rx[1]==OF_CMD_DIO:
+  local receivedList=integer_to_binary_list(of_cmd_rx[2])
+  local valueDO=receivedList[31]
+  receivedList[31]=False
+  local receivedDO=binary_list_to_integer(receivedList)
+  if OF_DEBUG_RX:
+  textmsg("Return Set DO command received: ",[receivedDO,valueDO])
+  end
+  set_standard_digital_out(receivedDO,valueDO)
+  of_send_command(OF_CMD_ACK)
+  textmsg("Digital Output #, set to #: ",[receivedDO,valueDO])
+  elif of_cmd_rx[1]==OF_CMD_AIO:
+  local receivedInt=of_cmd_rx[2]
+  local selector=pow(2,16)
+  local receivedAO=receivedInt%selector
+  local valueAO=(receivedInt-receivedAO)/selector/selector
+  if OF_DEBUG_RX:
+  textmsg("Return Set AO command received: ",[receivedAO,valueAO])
+  end
+  if receivedAO==0 or receivedAO==1:
+  set_standard_analog_out(receivedAO,valueAO)
+  else:
+  textmsg("Invalid Analog Output selected! ",receivedAO)
+  end
+  of_send_command(OF_CMD_ACK)
+  textmsg("Analog Output #, set to #: ",[receivedAO,valueAO])
+  else:
+  textmsg("Unknown command received: ",of_cmd_rx)
+  end
+  else:
+  textmsg("Unknown command-length received: ",of_cmd_rx)
+  end
+  end
+  thread appCommands_thread():
+  if OF_DEBUG_STATE:
+  textmsg("AppCommands thread starting..")
+  end
+  while of_portopened_appCommands:
+  of_cmd_rx=socket_read_binary_integer(2,"appCommands")
+  if of_cmd_rx[0]!=0:
+  parse_command()
+  end
+  sync()
+  of_cmd_received=of_cmd_received+1
+  end
+  if OF_DEBUG_STATE:
+  textmsg("AppCommands thread stopped.")
+  end
+  end
+  of_portopen_portProvider()
+  of_pn_data=socket_read_byte_list(2,"portProvider")
+  of_portclose_portProvider()
+  if of_pn_data[0]!=2:
+  popup(of_ce_comm_portprovider_allocate_error,title=of_ce_comm_error_title,error=True,blocking=False)
+  halt
+  end
+  if of_pn_data[1]<0:
+  of_pn_data[1]=of_pn_data[1]+256
+  end
+  if of_pn_data[2]<0:
+  of_pn_data[2]=of_pn_data[2]+256
+  end
+  OF_APP_ENGINE_PORT=256*of_pn_data[1]+of_pn_data[2]
+  of_portnum_appCommands=OF_APP_ENGINE_PORT
+  of_portnum_vectorStream=OF_APP_ENGINE_PORT+1
+  of_portopen_vectorStream()
+  of_vectorStream_thrd=run vectorStream_thread()
+  of_vectorProcess_thrd=run vectorProcess_thread()
+  sleep(0.3)
+  of_sg_thrd=run safeguard_thread()
+  of_portopen_appCommands()
+  of_cmd_thrd=run appCommands_thread()
+  of_tcp_offset_send()
+  of_ft_bias()
+  of_wait_ms(200)
+  #=========================================================#
+  #======    End of OptoForce App Engine Interface    ======#
+  #=========================================================#
+  #===================================================#
+  #======    Start of OptoForce Applications    ======#
+  #===================================================#
+  def of_move_ur(target=p[0,0,0,0,0,0],x=0,y=0,z=0,rx=0,ry=0,rz=0,fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,speed=0.05,acc=1.2,brake=1.2,silent=False,force_abs=True,base=True,joint_move=False):
+  sync()
+  target=of_merge_poses(target,x,y,z,rx,ry,rz,base)
+  sync()
+  local ret=of_go(target,fx,fy,fz,tx,ty,tz,f3d,t3d,speed,acc,brake,force_abs,base,joint_move)
+  if not silent:
+  if ret==0:
+  popup(of_move_return_2,title="OptoForce - UR Move error",error=True,blocking=True)
+  elif ret==2:
+  popup(of_move_return_1,title="OptoForce - UR Move error",error=True,blocking=True)
+  end
+  end
+  return ret
+  end
+  def of_search_ur(target=p[0,0,0,0,0,0],x=0,y=0,z=0,rx=0,ry=0,rz=0,fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,speed=0.03,acc=1.2,brake=1.2,silent=False,force_abs=True,base=True):
+  sync()
+  target=of_merge_poses(target,x,y,z,rx,ry,rz,base)
+  sync()
+  local ret=of_go(target,fx,fy,fz,tx,ty,tz,f3d,t3d,speed,acc,brake,force_abs,base)
+  if not silent:
+  if ret==0:
+  popup(of_search_return_2,title="OptoForce - UR Search error",error=True,blocking=True)
+  elif ret==1:
+  popup(of_search_return_1,title="OptoForce - UR Search error",error=True,blocking=True)
+  end
+  end
+  return ret
+  end
+  def of_center(x=0,y=0,z=0,rx=0,ry=0,rz=0,fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,speed=0.03,speedCP=99999,acc=0.2,brake=1.2,silent=False,force_abs=True,base=True):
+  sync()
+  if speedCP==99999:
+  speedCP=speed
+  end
+  def invert_offset(o):
+  local i=0
+  local r=p[0,0,0,0,0,0]
+  while(i<6):
+  if(o[i]!=0):
+  r[i]=-o[i]
+  else:
+  r[i]=0
+  end
+  i=i+1
+  end
+  return r
+  end
+  local search3D=False
+  local db=0
+  if x!=0:
+  db=db+1
+  end
+  if y!=0:
+  db=db+1
+  end
+  if z!=0:
+  db=db+1
+  end
+  if rx!=0:
+  db=db+1
+  end
+  if ry!=0:
+  db=db+1
+  end
+  if rz!=0:
+  db=db+1
+  end
+  if db==0:
+  popup(of_center_return_99,title=of_center_title,error=True,blocking=True)
+  return 99
+  end
+  if db>1:
+  popup(of_center_return_99,title=of_center_title,error=True,blocking=True)
+  return 99
+  end
+  sync()
+  if f3d!=0:
+  force_abs=True
+  search3D=True
+  if(fx==0 and fy==0 and fz==0):
+  fx=f3d*0.57735
+  fy=fx
+  fz=fx
+  end
+  f3d=norm(f3d)
+  end
+  if t3d!=0:
+  force_abs=True
+  search3D=True
+  if(tx==0 and ty==0 and tz==0):
+  tx=t3d*0.57735
+  ty=tx
+  tz=tx
+  end
+  t3d=norm(t3d)
+  end
+  local offset=p[x,y,z,-rx,-ry,-rz]
+  if(force_abs):
+  fx=norm(fx)
+  fy=norm(fy)
+  fz=norm(fz)
+  tx=norm(tx)
+  ty=norm(ty)
+  tz=norm(tz)
+  else:
+  local reverse=of_threshold(fx,fy,fz,tx,ty,tz,force_abs=False,base=base)
+  if reverse:
+  offset=invert_offset(offset)
+  fx=-fx
+  fy=-fy
+  fz=-fz
+  tx=-tx
+  ty=-ty
+  tz=-tz
+  end
+  end
+  sync()
+  local start_wp=get_actual_tcp_pose()
+  local target=of_pose_add(start_wp,offset,base)
+  of_wait_ms(200)
+  sync()
+  local ret=of_search_ur(target=target,fx=fx,fy=fy,fz=fz,tx=tx,ty=ty,tz=tz,f3d=f3d,t3d=t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=force_abs,base=base)
+  if ret!=1:
+  sync()
+  if(ret==0 and force_abs==True):
+  if not silent:
+  popup(of_center_return_4,title=of_center_title,error=True,blocking=True)
+  end
+  return 4
+  end
+  local pose1=get_actual_tcp_pose()
+  of_wait_ms(200)
+  sync()
+  if(force_abs):
+  local mret=0
+  if(search3D):
+  mret=of_search_ur(target=start_wp,f3d=3*f3d,t3d=3*t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=True,base=base)
+  else:
+  local aboveZ=of_above_zero(fx,fy,fz,tx,ty,tz,0,base)
+  sync()
+  if(aboveZ):
+  mret=of_search_ur(target=start_wp,fx=-fx,fy=-fy,fz=-fz,tx=-tx,ty=-ty,tz=-tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  else:
+  mret=of_search_ur(target=start_wp,fx=fx,fy=fy,fz=fz,tx=tx,ty=ty,tz=tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  end
+  end
+  sync()
+  if mret!=1:
+  if mret==0:
+  if not silent:
+  popup(of_center_return_5,title=of_center_title,error=True,blocking=True)
+  end
+  return 5
+  end
+  sync()
+  local pose2=get_actual_tcp_pose()
+  local poseC=interpolate_pose(pose1,pose2,0.5)
+  sync()
+  if(search3D):
+  mret=of_move_ur(poseC,f3d=6*f3d,t3d=6*t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=True,base=base)
+  else:
+  local aboveZ=of_above_zero(fx,fy,fz,tx,ty,tz,0,base)
+  if(aboveZ):
+  mret=of_move_ur(poseC,fx=3*fx,fy=3*fy,fz=3*fz,tx=3*tx,ty=3*ty,tz=3*tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  else:
+  mret=of_move_ur(poseC,fx=-3*fx,fy=-3*fy,fz=-3*fz,tx=-3*tx,ty=-3*ty,tz=-3*tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  end
+  end
+  if mret==1:
+  return 0
+  else:
+  if not silent:
+  popup(of_center_return_3,title=of_center_title,error=True,blocking=True)
+  end
+  return 3
+  end
+  end
+  end
+  sync()
+  local offset2=invert_offset(offset)
+  sync()
+  target=of_pose_add(start_wp,offset2,base)
+  sync()
+  local ret2=of_search_ur(target,fx=-fx,fy=-fy,fz=-fz,tx=-tx,ty=-ty,tz=-tz,f3d=f3d,t3d=t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=force_abs,base=base)
+  if ret2!=1:
+  sync()
+  local pose2=get_actual_tcp_pose()
+  local poseC=interpolate_pose(pose1,pose2,0.5)
+  local mret=0
+  of_wait_ms(200)
+  sync()
+  if(force_abs):
+  if(search3D):
+  mret=of_move_ur(poseC,f3d=3*f3d,t3d=3*t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  else:
+  local aboveZ=of_above_zero(fx,fy,fz,tx,ty,tz,0,base)
+  if(aboveZ):
+  mret=of_move_ur(poseC,fx=-fx,fy=-fy,fz=-fz,tx=-tx,ty=-ty,tz=-tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  else:
+  mret=of_move_ur(poseC,fx=fx,fy=fy,fz=fz,tx=tx,ty=ty,tz=tz,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  end
+  end
+  else:
+  mret=of_move_ur(poseC,fx=fx,fy=fy,fz=fz,tx=tx,ty=ty,tz=tz,speed=speedCP,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  end
+  sync()
+  if mret==1:
+  return 0
+  else:
+  if not silent:
+  popup(of_center_return_3,title=of_center_title,error=True,blocking=True)
+  end
+  return 3
+  end
+  else:
+  if not silent:
+  popup(of_center_return_2,title=of_center_title,error=True,blocking=True)
+  end
+  return 2
+  end
+  else:
+  if not silent:
+  popup(of_center_return_1,title=of_center_title,error=True,blocking=True)
+  end
+  return 1
+  end
+  end
+  def of_pin_in_the_hole(distZ,forceZ,torqueXY=0.2,angR=0.35,speedR=0.052,alpha=0.1,omega=0.5,centeringRate=15,silent=False,base=True):
+  local state=1
+  local startPose=get_actual_tcp_pose()
+  global of_pin_dist2Reach=distZ
+  local dist2StartC=alpha*distZ
+  local dist2EndC=omega*distZ
+  local forceXY=0.001
+  local torqueXYZ=0.0001
+  local frameID=0
+  if base:
+  forceZ=-norm(forceZ)
+  else:
+  forceZ=norm(forceZ)
+  frameID=1
+  end
+  angR=norm(angR)
+  torqueXY=norm(torqueXY)
+  global of_pin_currentDist=0
+  local pith_forcePID=[of_ftpid_p_pith,of_ftpid_i_pith,of_ftpid_d_pith]
+  local pith_torquePID=[of_ftpid_p_pith,of_ftpid_i_pith,of_ftpid_d_pith]
+  of_ft_control_start(ft_select=[True,True,True,True,True,True],ft_values=[forceXY,forceXY,forceZ,torqueXYZ,torqueXYZ,torqueXYZ],frameID=frameID,frameRPY=[0,0,0],forcePID=pith_forcePID,torquePID=pith_torquePID,deviation_max=0)
+  of_wait_ms(300)
+  local cntr=0
+  of_pin_currentDist=point_dist(startPose,get_actual_tcp_pose())
+  while(of_pin_currentDist<distZ):
+  if(cntr>centeringRate):
+  of_ft_control_stop()
+  if((of_pin_currentDist>dist2StartC)and(of_pin_currentDist<dist2EndC)):
+  local SpeedR=speedR*(1-0.75*of_pin_currentDist/of_pin_dist2Reach)
+  local retVal=of_center_RxRy(angR,torqueXY,SpeedR,stateCntr=(cntr*10),silent=silent,base=base)
+  if(retVal!=0):
+  of_ftpid_p_pith=of_ftpid_p_pith_default
+  of_ftpid_i_pith=of_ftpid_i_pith_default
+  of_ftpid_d_pith=of_ftpid_d_pith_default
+  return retVal
+  end
+  end
+  cntr=0
+  forceXY=-1*forceXY
+  torqueXYZ=-1*torqueXYZ
+  of_ft_control_start(ft_select=[True,True,True,True,True,True],ft_values=[forceXY,forceXY,forceZ,torqueXYZ,torqueXYZ,torqueXYZ],frameID=frameID,frameRPY=[0,0,0],forcePID=pith_forcePID,torquePID=pith_torquePID,deviation_max=0)
+  end
+  of_wait_ms(100)
+  cntr=cntr+1
+  of_pin_currentDist=point_dist(startPose,get_actual_tcp_pose())
+  end
+  of_ft_control_stop()
+  of_ftpid_p_pith=of_ftpid_p_pith_default
+  of_ftpid_i_pith=of_ftpid_i_pith_default
+  of_ftpid_d_pith=of_ftpid_d_pith_default
+  return 0
+  end
+  def of_pin_insertion(minDistZ,forceZ,compliance=[True,True,True,True,True,True],maxDistZ=0,expSpeed=0,deltaForce=1,timeOut=0,FTLimits=[999,0,999,999,999,999],PGainF=1.0,PGainT=1.0,silent=False):
+  sync()
+  local pinRet=0
+  if not(minDistZ>=0):
+  popup(of_pin_insertion_param_error_minDistZ,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(forceZ>0):
+  popup(of_pin_insertion_param_error_forceZ,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(maxDistZ>=0):
+  popup(of_pin_insertion_param_error_maxDistZ,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(maxDistZ>=minDistZ or maxDistZ==0):
+  popup(of_pin_insertion_param_error_maxDistZ_minDistZ,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(expSpeed>=0):
+  popup(of_pin_insertion_param_error_expSpeed,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(deltaForce>=0):
+  popup(of_pin_insertion_param_error_deltaForce,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(timeOut>=0):
+  popup(of_pin_insertion_param_error_timeOut,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(FTLimits[0]>=0):
+  popup(of_pin_insertion_param_error_FTLimits,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(FTLimits[1]>=0):
+  popup(of_pin_insertion_param_error_FTLimits,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(FTLimits[3]>=0):
+  popup(of_pin_insertion_param_error_FTLimits,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(FTLimits[4]>=0):
+  popup(of_pin_insertion_param_error_FTLimits,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(FTLimits[5]>=0):
+  popup(of_pin_insertion_param_error_FTLimits,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(PGainF>0):
+  popup(of_pin_insertion_param_error_PGainF,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  elif not(PGainT>0):
+  popup(of_pin_insertion_param_error_PGainT,title=of_pin_insertion_param_error_title,error=True,blocking=True)
+  pinRet=8
+  end
+  if(pinRet!=0):
+  return pinRet
+  end
+  local frameID=1
+  local base=False
+  local startPose=get_actual_tcp_pose()
+  if maxDistZ==0:
+  maxDistZ=minDistZ
+  end
+  local dist2Reach=maxDistZ
+  sync()
+  local ft_select=compliance
+  ft_select[2]=True
+  local ft_values=[0,0,0,0,0,0]
+  ft_values[2]=forceZ
+  local ft_threshold=FTLimits
+  ft_threshold[2]=0
+  i=0
+  while i<6:
+  if ft_select[i]:
+  ft_threshold[i]=0
+  end
+  i=i+1
+  end
+  local pin_useTimeOut=True
+  if timeOut==0:
+  pin_useTimeOut=False
+  end
+  local timeOut100ms=timeOut*10
+  local deltaD=expSpeed/10
+  global of_pin_currentDist=0
+  local peakScanner=run of_peakFzScanner()
+  sync()
+  local pin_forcePID=[PGainF,of_fpid_i_pin,of_fpid_d_pin]
+  local pin_torquePID=[PGainT,of_tpid_i_pin,of_tpid_d_pin]
+  of_ft_control_start(ft_select=ft_select,ft_values=ft_values,frameID=frameID,frameRPY=[0,0,0],forcePID=pin_forcePID,torquePID=pin_torquePID,deviation_max=0)
+  local cntr=0
+  local leaveInsertion=False
+  local bumpZeroPeak=True
+  local pin_actual_pose=get_actual_tcp_pose()
+  of_pin_currentDist=point_dist(startPose,pin_actual_pose)
+  local pin_last_pose=pin_actual_pose
+  global actual_deltaD=deltaD
+  while((of_pin_currentDist<dist2Reach)and not leaveInsertion):
+  of_wait_ms(100)
+  pin_actual_pose=get_actual_tcp_pose()
+  of_pin_currentDist=point_dist(startPose,pin_actual_pose)
+  actual_deltaD=(actual_deltaD+pose_dist(pin_last_pose,pin_actual_pose))/2
+  if(of_threshold(fx=ft_threshold[0],fy=ft_threshold[1],fz=0,tx=ft_threshold[3],ty=ft_threshold[4],tz=ft_threshold[5],force_abs=True,base=base)):
+  leaveInsertion=True
+  if(of_pin_currentDist<minDistZ):
+  pinRet=7
+  else:
+  pinRet=6
+  end
+  of_ft_control_stop()
+  if not silent:
+  popup(of_pin_insertion_exit_maxSideFT,title=of_pin_insertion_exit_title,warning=True,blocking=True)
+  end
+  elif(pin_useTimeOut and(cntr>timeOut100ms)):
+  leaveInsertion=True
+  if(of_pin_currentDist<minDistZ):
+  pinRet=5
+  else:
+  pinRet=4
+  end
+  of_ft_control_stop()
+  if not silent:
+  popup(of_pin_insertion_exit_timeOut,title=of_pin_insertion_exit_title,warning=True,blocking=True)
+  end
+  elif(actual_deltaD<deltaD and cntr>=10):
+  leaveInsertion=True
+  if(of_pin_currentDist<minDistZ):
+  pinRet=3
+  of_ft_control_stop()
+  if not silent:
+  popup(of_pin_insertion_exit_deltaD,title=of_pin_insertion_exit_title,warning=True,blocking=True)
+  end
+  else:
+  pinRet=2
+  end
+  elif(of_pin_currentDist>=minDistZ):
+  if bumpZeroPeak:
+  bumpZeroPeak=False
+  abs0_tFT[2]=True
+  sync()
+  else:
+  if(abs_tFT[2]>norm(forceZ+deltaForce)and not abs0_tFT[2]):
+  of_peakFzScanner_flag=False
+  leaveInsertion=True
+  pinRet=1
+  end
+  end
+  end
+  pin_last_pose=pin_actual_pose
+  cntr=cntr+1
+  sync()
+  end
+  of_ft_control_stop()
+  of_peakFzScanner_flag=False
+  kill peakScanner
+  of_fpid_i_pin=of_fpid_i_pin_default
+  of_fpid_d_pin=of_fpid_d_pin_default
+  of_tpid_i_pin=of_tpid_i_pin_default
+  of_tpid_d_pin=of_tpid_d_pin_default
+  return pinRet
+  end
+  def of_connector_insertion(distZ,forceZ,forceXY_en0=[True,True],torqueXYZ_en0=[True,True,True],torqueXY=0.1,angR=0.175,speedR=0.01,alpha=0.1,omega=0.4,centeringRate=15,bumpRelative=1,deltaForce=1,PID_Gain=0.5,silent=False,base=True):
+  sync()
+  local state=1
+  local startPose=get_actual_tcp_pose()
+  global of_conn_dist2Reach=distZ
+  local dist2StartC=alpha*distZ
+  local dist2EndC=omega*distZ
+  local forceXY=[0,0]
+  local torqueXYZ=[0,0,0]
+  local frameID=0
+  sync()
+  local i=0
+  while i<2:
+  if forceXY_en0[i]:
+  forceXY[i]=0.001
+  else:
+  forceXY[i]=0
+  end
+  i=i+1
+  end
+  i=0
+  while i<3:
+  if torqueXYZ_en0[i]:
+  torqueXYZ[i]=0.0001
+  else:
+  torqueXYZ[i]=0
+  end
+  i=i+1
+  end
+  sync()
+  if base:
+  forceZ=-norm(forceZ)
+  deltaForce=-norm(deltaForce)
+  frameID=0
+  else:
+  forceZ=norm(forceZ)
+  deltaForce=norm(deltaForce)
+  frameID=1
+  end
+  angR=norm(angR)
+  torqueXY=norm(torqueXY)
+  global of_conn_currentDist=0
+  sync()
+  local peakScanner=run of_peakFzScanner()
+  sync()
+  local conn_forcePID=[PID_Gain,of_ftpid_i_conn,of_ftpid_d_conn]
+  local conn_torquePID=[PID_Gain,of_ftpid_i_conn,of_ftpid_d_conn]
+  of_ft_control_start(ft_select=[forceXY_en0[0],forceXY_en0[1],True,torqueXYZ_en0[0],torqueXYZ_en0[1],torqueXYZ_en0[2]],ft_values=[forceXY[0],forceXY[1],forceZ,torqueXYZ[0],torqueXYZ[1],torqueXYZ[2]],frameID=frameID,frameRPY=[0,0,0],forcePID=conn_forcePID,torquePID=conn_torquePID,deviation_max=0)
+  of_wait_ms(300)
+  local cntr=0
+  local bumpEnd=False
+  local bumpZeroPeak=True
+  of_conn_currentDist=point_dist(startPose,get_actual_tcp_pose())
+  while((of_conn_currentDist<distZ)and not bumpEnd):
+  if(cntr>centeringRate):
+  of_ft_control_stop()
+  sync()
+  if((of_conn_currentDist>dist2StartC)and(of_conn_currentDist<dist2EndC)):
+  local SpeedR=speedR*(1-0.75*of_conn_currentDist/of_conn_dist2Reach)
+  local retVal=of_center_RxRy(angR,torqueXY,SpeedR,stateCntr=(cntr*10),silent=silent,base=base)
+  sync()
+  if(retVal!=0):
+  kill peakScanner
+  of_ftpid_i_conn=of_ftpid_i_conn_default
+  of_ftpid_d_conn=of_ftpid_d_conn_default
+  return retVal
+  end
+  end
+  cntr=0
+  if forceXY_en0:
+  forceXY=[-1*forceXY[0],-1*forceXY[1]]
+  end
+  if torqueXYZ_en0:
+  torqueXYZ=[-1*torqueXYZ[0],-1*torqueXYZ[1],-1*torqueXYZ[2]]
+  end
+  of_ft_control_start(ft_select=[forceXY_en0[0],forceXY_en0[1],True,torqueXYZ_en0[0],torqueXYZ_en0[1],torqueXYZ_en0[2]],ft_values=[forceXY[0],forceXY[1],forceZ,torqueXYZ[0],torqueXYZ[1],torqueXYZ[2]],frameID=frameID,frameRPY=[0,0,0],forcePID=conn_forcePID,torquePID=conn_torquePID,deviation_max=0)
+  end
+  of_wait_ms(100)
+  cntr=cntr+1
+  of_conn_currentDist=point_dist(startPose,get_actual_tcp_pose())
+  sync()
+  if(of_conn_currentDist>(distZ*bumpRelative)):
+  if bumpZeroPeak:
+  bumpZeroPeak=False
+  abs0_tFT[2]=True
+  sync()
+  end
+  if base:
+  if(bFT[2]>norm(forceZ+deltaForce)):
+  bumpEnd=True
+  of_peakFzScanner_flag=False
+  end
+  else:
+  if(abs_tFT[2]>norm(forceZ+deltaForce)):
+  bumpEnd=True
+  of_peakFzScanner_flag=False
+  end
+  end
+  end
+  sync()
+  end
+  sync()
+  of_ft_control_stop()
+  kill peakScanner
+  of_ftpid_i_conn=of_ftpid_i_conn_default
+  of_ftpid_d_conn=of_ftpid_d_conn_default
+  return 0
+  end
+  def of_fix_and_rotate(rotateZ,torqueZ,distZ,forceZ,forceXY_en0=[True,True],torqueXYZ_en0=[True,True,True],torqueXY=0.1,angR=0.175,speedR=0.01,alpha=0.1,omega=0.4,centeringRate=15,bumpRelative=1.0,deltaForce=1,PID_Gain=0.5,rotateEndSearch=1.0,torqueEndSearch=9999,silent=False,base=True):
+  if rotateEndSearch<0 and rotateEndSearch>1.0:
+  popup(of_fix_and_rotate_param_error,title=of_fix_and_rotate_title,error=True,blocking=True)
+  return 99
+  end
+  if torqueEndSearch==9999:
+  torqueEndSearch=torqueZ/2
+  end
+  local moveRz=rotateZ*rotateEndSearch
+  local searchRz=rotateZ*norm(1-rotateEndSearch)
+  local retConn=of_connector_insertion(distZ,forceZ,forceXY_en0,torqueXYZ_en0,torqueXY,angR,speedR,alpha,omega,centeringRate,bumpRelative,deltaForce,PID_Gain,silent,base=base)
+  if(retConn==0):
+  local retM=of_move_ur(rz=moveRz,tz=torqueZ,speed=speedR,acc=speedR*3,silent=True,force_abs=True,base=base)
+  if(retM!=1):
+  if not silent:
+  popup(of_fix_and_rotate_return_21,title=of_fix_and_rotate_title,error=True,blocking=True)
+  end
+  return 21
+  else:
+  local retS=of_search_ur(rz=searchRz,tz=torqueEndSearch,speed=speedR,acc=speedR*3,silent=True,force_abs=True,base=base)
+  if(retS==1 and rotateEndSearch<1.0):
+  if not silent:
+  popup(of_fix_and_rotate_return_22,title=of_fix_and_rotate_title,error=True,blocking=True)
+  end
+  return 22
+  else:
+  return 0
+  end
+  end
+  else:
+  return 10+retConn
+  end
+  end
+  def of_box_ins(x1=0,y1=0,z1=0,x2=0,y2=0,z2=0,rx=0,ry=0,rz=0,speed=0.03,acc=0.5,brake=2,force=2,torque=0.3,silent=False,insert_force_multiplier=1.5,depth=0,base=True):
+  def calc_3d_forces(force,x,y,z,filtering=True):
+  local fnorm=sqrt(x*x+y*y+z*z)
+  local forces=[-force*x/fnorm,-force*y/fnorm,-force*z/fnorm]
+  if not filtering:
+  return forces
+  end
+  i=0
+  while i<3:
+  if norm(forces[i])<0.1:
+  forces[i]=0
+  end
+  i=i+1
+  end
+  return forces
+  end
+  local start_pose=get_actual_tcp_pose()
+  sync()
+  local ret=of_move_ur(rx=rx,ry=ry,rz=rz,f3d=force*2,t3d=torque*2,speed=speed,acc=acc,brake=brake,silent=True,base=base)
+  if ret!=1:
+  if not silent:
+  popup(of_box_ins_return_4,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 4
+  end
+  sync()
+  local fdir=calc_3d_forces(force,x1,y1,z1)
+  local m3d=[x1,y1,z1]
+  if base==False:
+  fdir=of_rotate_qu(fdir,of_rotvec2qu([-rx,-ry,-rz]))
+  m3d=of_rotate_qu([x1,y1,z1],of_rotvec2qu([-rx,-ry,-rz]))
+  end
+  sync()
+  ret=of_search_ur(x=m3d[0],y=m3d[1],z=m3d[2],fx=fdir[0],fy=fdir[1],fz=fdir[2],t3d=torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  if ret==1:
+  if not silent:
+  popup(of_box_ins_return_1,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 1
+  end
+  sync()
+  if x2!=0 or y2!=0 or z2!=0:
+  fdir=calc_3d_forces(force,x2,y2,z2)
+  ret=of_search_ur(x=x2,y=y2,z=z2,fx=fdir[0],fy=fdir[1],fz=fdir[2],t3d=2*torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  if ret==1:
+  if not silent:
+  popup(of_box_ins_return_2,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 2
+  end
+  end
+  local apos=get_actual_tcp_pose()
+  ret=of_move_ur(p[apos[0],apos[1],apos[2],start_pose[3],start_pose[4],start_pose[5]],f3d=insert_force_multiplier*force,t3d=insert_force_multiplier*torque,speed=speed,acc=acc,brake=brake,silent=True,base=base)
+  if ret!=1:
+  if not silent:
+  popup(of_box_ins_return_3,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 3
+  end
+  sync()
+  if depth!=0:
+  fdir=calc_3d_forces(insert_force_multiplier*force,x1,y1,z1)
+  local inserted=False
+  local collisions=0
+  while not inserted:
+  sync()
+  local current_dist=pose_dist(get_actual_tcp_pose(),start_pose)
+  local move3d=calc_3d_forces(depth-current_dist,-x1,-y1,-z1,filtering=False)
+  ret=of_move_ur(x=move3d[0],y=move3d[1],z=move3d[2],fx=fdir[0],fy=fdir[1],fz=fdir[2],t3d=insert_force_multiplier*torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  if ret==2 or ret==0:
+  collisions=collisions+1
+  if collisions>5:
+  if not silent:
+  popup(of_box_ins_return_8,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 8
+  end
+  if move3d[0]==0:
+  if of_bi_cp_x_inv:
+  of_cp_inv=True
+  end
+  ret=of_center(x=depth,f3d=insert_force_multiplier*force,t3d=insert_force_multiplier*torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  of_cp_inv=False
+  if ret!=0:
+  if not silent:
+  popup(of_box_ins_return_5,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 5
+  end
+  end
+  if move3d[1]==0:
+  if of_bi_cp_y_inv:
+  of_cp_inv=True
+  end
+  ret=of_center(y=depth,f3d=insert_force_multiplier*force,t3d=insert_force_multiplier*torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  of_cp_inv=False
+  if ret!=0:
+  if not silent:
+  popup(of_box_ins_return_6,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 6
+  end
+  end
+  if move3d[2]==0:
+  if of_bi_cp_z_inv:
+  of_cp_inv=True
+  end
+  ret=of_center(z=depth,f3d=insert_force_multiplier*force,t3d=insert_force_multiplier*torque,speed=speed,acc=acc,brake=brake,silent=True,force_abs=False,base=base)
+  of_cp_inv=False
+  if ret!=0:
+  if not silent:
+  popup(of_box_ins_return_7,title=of_box_ins_title,error=True,blocking=True)
+  end
+  return 7
+  end
+  end
+  elif ret==1:
+  inserted=True
+  end
+  end
+  end
+  return 0
+  end
+  def of_stacking(start_wp,thickness,it,it_max=0,x=0,y=0,z=0,f3d=0,t3d=0,moveF3D=9999,moveT3D=9999,speed=0.03,moveSpd=0.05,acc=1.2,brake=1.2,move2Start=False,silent=False,base=True):
+  local stack_wp=start_wp
+  of_stack_curr_it=it
+  if(moveF3D==9999):
+  moveF3D=2*f3d
+  end
+  if(moveT3D==9999):
+  moveT3D=2*t3d
+  end
+  if(it_max==0):
+  if(thickness==0):
+  it=it_max-1
+  else:
+  it_max=floor(norm((x+y+z)/thickness))
+  end
+  elif(it_max>norm((x+y+z)/thickness)):
+  popup(of_stacking_param_error_itmax,title=of_stacking_title,error=True,blocking=True)
+  return 995
+  elif(thickness==0):
+  popup(of_stacking_param_error_thickness,title=of_stacking_title,error=True,blocking=True)
+  return 990
+  end
+  local it_end=floor(norm((x+y+z)/thickness))
+  local delta=0
+  local deltaMax=0
+  if(thickness>0):
+  delta=norm(thickness*(it_end-of_stack_curr_it-1))
+  elif(thickness<0):
+  delta=norm(thickness*of_stack_curr_it)
+  end
+  local offset=p[0,0,0,0,0,0]
+  local db=0
+  if x!=0:
+  db=db+1
+  offset=p[delta*x/norm(x),0,0,0,0,0]
+  offsetMax=p[x,0,0,0,0,0]
+  end
+  if y!=0:
+  db=db+1
+  offset=p[0,delta*y/norm(y),0,0,0,0]
+  offsetMax=p[0,y,0,0,0,0]
+  end
+  if z!=0:
+  db=db+1
+  offset=p[0,0,delta*z/norm(z),0,0,0]
+  offsetMax=p[0,0,z,0,0,0]
+  end
+  if db==0:
+  popup(of_stacking_param_error_dir,title=of_stacking_title,error=True,blocking=True)
+  return 991
+  end
+  if db>1:
+  popup(of_stacking_param_error_dir,title=of_stacking_title,error=True,blocking=True)
+  return 990+db
+  end
+  if delta==0.0:
+  offset=p[0,0,0,0,0,0]
+  end
+  if move2Start:
+  local mRet=of_move_ur(target=start_wp,f3d=moveF3D,t3d=moveT3D,speed=moveSpd,acc=acc,brake=brake,silent=True,force_abs=True,base=base)
+  if(mRet!=1):
+  if not silent:
+  popup(of_stacking_return_5,title=of_stacking_title,error=True,blocking=True)
+  end
+  return 5
+  end
+  end
+  if(it>=it_max):
+  if not silent:
+  if(thickness>0):
+  popup(of_stacking_return_1_stack,title=of_stacking_title,error=True,blocking=True)
+  else:
+  popup(of_stacking_return_1_destack,title=of_stacking_title,error=True,blocking=True)
+  end
+  end
+  of_stack_curr_it=0
+  return 1
+  end
+  stack_wp=of_pose_add(start_wp,offset,base)
+  local stack_max_wp=of_pose_add(start_wp,offsetMax,base)
+  local mRet=of_move_ur(target=stack_wp,f3d=moveF3D,t3d=moveT3D,speed=moveSpd,acc=acc,brake=brake,silent=True,force_abs=True,base=base)
+  if(mRet!=1):
+  if not silent:
+  popup(of_stacking_return_4,title=of_stacking_title,error=True,blocking=True)
+  end
+  return 4
+  end
+  local sRet=of_search_ur(target=stack_max_wp,f3d=f3d,t3d=t3d,speed=speed,acc=acc,brake=brake,silent=True,force_abs=True,base=base)
+  if(sRet==2):
+  elif(sRet==1):
+  if not silent:
+  popup(of_stacking_return_2,title=of_stacking_title,error=True,blocking=True)
+  end
+  return 2
+  else:
+  if not silent:
+  popup(of_stacking_return_3,title=of_stacking_title,error=True,blocking=True)
+  end
+  return 3
+  end
+  of_stack_curr_it=of_stack_curr_it+1
+  return 0
+  end
+  def of_stacking_last_it():
+  return of_stack_curr_it
+  end
+  def of_get_virt_orient(virt_pose):
+  local retVal=[virt_pose[3],virt_pose[4],virt_pose[5]]
+  textmsg("virt_orient: ",retVal)
+  return retVal
+  end
+  def of_polishing(forceAmp,forceDir,pidGain=[1.0,1.0,1.0]):
+  local force_orient=of_get_virt_orient(forceDir)
+  local frameRotVec=rpy2rotvec(force_orient)
+  of_ft_control_start(ft_select=[False,False,True,False,False,False],ft_values=[0,0,forceAmp,0,0,0],frameID=0,frameRPY=frameRotVec,forcePID=pidGain,torquePID=pidGain,deviation_max=0)
+  end
+  #=================================================#
+  #======    End of OptoForce Applications    ======#
+  #=================================================#
+  # end: URCap Installation Node

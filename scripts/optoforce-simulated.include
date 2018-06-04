@@ -1,0 +1,55 @@
+# Copyright 2018 NoMagic Sp. z o.o.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+  
+  def of_ft_bias():
+    textmsg("Simulating FT bias")
+    sync()
+    textmsg("End of simulating FT bias")
+  end
+
+  def of_go(of_go_target,fx=0,fy=0,fz=0,tx=0,ty=0,tz=0,f3d=0,t3d=0,speed=0.03,acc=1.2,brake=1.2,force_abs=True,base=True,joint_move=False, contact_or_suck=False):
+    textmsg("Simulating FT of_go")
+    textmsg("OF go target:")
+    textmsg(of_go_target)
+    textmsg("Fx:")
+    textmsg(fx)
+    textmsg("Fy:")
+    textmsg(fy)
+    textmsg("Fz:")
+    textmsg(fz)
+    textmsg("Tx:")
+    textmsg(tx)
+    textmsg("Ty:")
+    textmsg(ty)
+    textmsg("Tz:")
+    textmsg(tz)
+    textmsg("F3d:")
+    textmsg(f3d)
+    textmsg("T3d:")
+    textmsg(t3d)
+    textmsg("Speed:")
+    textmsg(speed)
+    textmsg("Acc:")
+    textmsg(acc)
+    textmsg("Brake:")
+    textmsg(brake)
+    textmsg("Force abs:")
+    textmsg(force_abs)
+    textmsg("Base:")
+    textmsg(base)
+    textmsg("Joint_move:")
+    textmsg(joint_move)
+    sleep(2)
+    textmsg("End of simulating FT of_go")
+  end

@@ -1,0 +1,11 @@
+# Interval assumed for each interpolation loop in seconds  - usually 0.008
+# The TIME_INTERVAL/SERVOJ_TIME is equal to move speedup factor: robot time/real time
+TIME_INTERVAL: 0.008
+# Time each robot moving servoj command executes in seconds - usually 0.008
+SERVOJ_TIME: 0.008
+# Gain used by servoj command (in 100 - 2000 range)
+SERVOJ_GAIN: 300
+# Lookahead time used by servoj command in seconds (in 0.03 - 0.2 range)
+SERVOJ_LOOKAHEAD_TIME: 0.03
+# Maximum allowed joint difference when approaching the final target
+MAX_JOINT_DIFFERENCE: 0.1

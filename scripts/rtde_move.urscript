@@ -1,0 +1,244 @@
+# Copyright 2018 NoMagic Sp. z o.o.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+def driveRobot():
+{% include 'follow_joint_trajectory.include' %}
+
+{% if USE_OPTOFORCE %}
+{% include 'optoforce.include' %}
+{% else %}
+{% include 'optoforce-simulated.include' %}
+{% endif %}
+
+{% include 'rg2-simulated.include' %}
+
+{% if USE_OPTOFORCE %}
+    thread ft_rtde():
+        while True:
+            write_output_float_register(0, Fx)
+            write_output_float_register(1, Fy)
+            write_output_float_register(2, Fz)
+            write_output_float_register(3, Tx)
+            write_output_float_register(4, Ty)
+            write_output_float_register(5, Tz)
+            sync()
+        end
+    end
+
+    run ft_rtde()
+{% endif %}
+
+    def adjust_wrist3(joints):
+        PI = 3.14159
+        new_joint_5 = joints[5]
+        if joints[5] < -PI:
+            new_joint_5 = joints[5] + PI
+        end
+        if joints[5] > PI:
+            new_joint_5 = joints[5] - PI
+        end
+        return [joints[0], joints[1], joints[2], joints[3], joints[4], joints[5]]
+    end
+
+    def set_ready(isReady):
+        write_output_boolean_register(0, isReady)
+    end
+
+    def is_new_command_requested():
+        return read_input_boolean_register(0)
+    end
+
+    # Returns whether we should continue running the program.
+    def process_command():
+        textmsg("RTDE cmd")
+
+        cmd = read_input_integer_register(0)
+
+        if cmd == 1:
+            textmsg("MoveJ")
+            joints = [0, 0, 0, 0, 0, 0]
+            joints[0] = read_input_float_register(0)
+            joints[1] = read_input_float_register(1)
+            joints[2] = read_input_float_register(2)
+            joints[3] = read_input_float_register(3)
+            joints[4] = read_input_float_register(4)
+            joints[5] = read_input_float_register(5)
+            velocity = read_input_float_register(6)
+            acceleration = read_input_float_register(7)
+            textmsg("Target position in joints")
+            textmsg(joints)
+            joints = adjust_wrist3(joints)
+            textmsg("Target position in joints [wrist 3 adjusted to <-PI, PI> ]")
+            textmsg(joints)
+            movej(joints,a=acceleration,v=velocity)
+        elif cmd == 2:
+            textmsg("MoveJ IK")
+            rpy_vector = [0, 0, 0]
+            rpy_vector[0] = read_input_float_register(3)
+            rpy_vector[1] = read_input_float_register(4)
+            rpy_vector[2] = read_input_float_register(5)
+            axis_angle = rpy2rotvec(rpy_vector)
+            pos = p[0, 0, 0, 0, 0, 0]
+            pos[0] = read_input_float_register(0)
+            pos[1] = read_input_float_register(1)
+            pos[2] = read_input_float_register(2)
+            pos[3] = axis_angle[0]
+            pos[4] = axis_angle[1]
+            pos[5] = axis_angle[2]
+            velocity = read_input_float_register(6)
+            acceleration = read_input_float_register(7)
+            textmsg("Target position")
+            textmsg(pos)
+            qnear = get_actual_joint_positions()
+            joints = get_inverse_kin(pos, qnear)
+            textmsg("Target position in joints")
+            textmsg(joints)
+            joints = adjust_wrist3(joints)
+            textmsg("Target position in joints [wrist 3 adjusted to <-PI, PI> ]")
+            textmsg(joints)
+            movej(joints,a=acceleration,v=velocity)
+        elif cmd == 3:
+            textmsg("MoveL")
+            rpy_vector = [0, 0, 0]
+            rpy_vector[0] = read_input_float_register(3)
+            rpy_vector[1] = read_input_float_register(4)
+            rpy_vector[2] = read_input_float_register(5)
+            axis_angle = rpy2rotvec(rpy_vector)
+            pos = p[0, 0, 0, 0, 0, 0]
+            pos[0] = read_input_float_register(0)
+            pos[1] = read_input_float_register(1)
+            pos[2] = read_input_float_register(2)
+            pos[3] = axis_angle[0]
+            pos[4] = axis_angle[1]
+            pos[5] = axis_angle[2]
+            velocity = read_input_float_register(6)
+            acceleration = read_input_float_register(7)
+            textmsg("Target position")
+            textmsg(pos)
+            qnear = get_actual_joint_positions()
+            joints = get_inverse_kin(pos, qnear)
+            textmsg("Target position in joints")
+            textmsg(joints)
+            joints = adjust_wrist3(joints)
+            textmsg("Target position in joints [wrist 3 adjusted to <-PI, PI> ]")
+            textmsg(joints)
+            movel(joints,a=acceleration,v=velocity)
+        elif cmd == 4:
+            textmsg("MoveL FK")
+            joints = [0, 0, 0, 0, 0, 0]
+            joints[0] = read_input_float_register(0)
+            joints[1] = read_input_float_register(1)
+            joints[2] = read_input_float_register(2)
+            joints[3] = read_input_float_register(3)
+            joints[4] = read_input_float_register(4)
+            joints[5] = read_input_float_register(5)
+            velocity = read_input_float_register(6)
+            acceleration = read_input_float_register(7)
+            textmsg("Target position in joints")
+            textmsg(joints)
+            joints = adjust_wrist3(joints)
+            textmsg("Target position in joints [wrist 3 adjusted to <-PI, PI> ]")
+            textmsg(joints)
+            movel(joints,a=acceleration,v=velocity)
+        elif cmd == 10:
+            rg2ProgOpen(read_input_float_register(0), read_input_float_register(1), False)
+        elif cmd == 11:
+            rg2ProgOpen(read_input_float_register(0), read_input_float_register(1), True)
+        elif cmd == 20:
+            textmsg("Suction on")
+            set_standard_digital_out(0,True)
+        elif cmd == 21:
+            textmsg("Suction off")
+            set_standard_digital_out(0,False)
+        elif cmd == 22:
+            textmsg("Warinig on")
+            set_standard_digital_out(6,True)
+        elif cmd == 23:
+            textmsg("Warinig off")
+            set_standard_digital_out(6,False)    
+        elif cmd == 30:
+            textmsg("FT zero")
+            of_ft_bias()
+        elif cmd == 31 or cmd == 50:
+            textmsg("Move to contact")
+            contact_or_suck = cmd == 50
+            rpy_vector = [0, 0, 0]
+            rpy_vector[0] = read_input_float_register(3)
+            rpy_vector[1] = read_input_float_register(4)
+            rpy_vector[2] = read_input_float_register(5)
+            axis_angle = rpy2rotvec(rpy_vector)
+            pos = p[0, 0, 0, 0, 0, 0]
+            pos[0] = read_input_float_register(0)
+            pos[1] = read_input_float_register(1)
+            pos[2] = read_input_float_register(2)
+            pos[3] = axis_angle[0]
+            pos[4] = axis_angle[1]
+            pos[5] = axis_angle[2]
+            velocity = read_input_float_register(6)
+            acceleration = read_input_float_register(7)
+            textmsg("Target position")
+            textmsg(pos)
+
+            fx = read_input_float_register(8)
+            fy = read_input_float_register(9)
+            fz = read_input_float_register(10)
+            tx = read_input_float_register(11)
+            ty = read_input_float_register(12)
+            tz = read_input_float_register(13)
+            f3d = read_input_float_register(14)
+            t3d = read_input_float_register(15)
+
+            of_go(pos,fx,fy,fz,tx,ty,tz,f3d,t3d,velocity,acceleration,1.2,True,True,False,contact_or_suck)
+        elif cmd == 40:
+            textmsg("Follow join trajectory")
+            follow_joint_trajectory()
+        elif cmd == 99:
+            textmsg("Received stop")
+        end
+        # Return True for all commands except STOP.
+        return cmd != 99
+    end
+
+    textmsg("RTDE move")
+
+    set_standard_digital_out(6,True)
+    sleep(1.0)
+    set_standard_digital_out(6,False)
+
+    running = True
+    is_command_being_executed = False
+
+    while running:
+        # If there is no new command waiting in the registers, then
+        # confirm all commands are completed and we can accept new one.
+        if not is_new_command_requested():
+            set_ready(True)
+            is_command_being_executed = False
+        # Otherwise handle new command.
+        else:
+            # Confirm we have received new command.
+            set_ready(False)
+            # Process new command if we haven't run it yet.
+            if not is_command_being_executed:
+                running = process_command()
+            end
+            is_command_being_executed = True
+        end
+        sync()
+    end
+
+    textmsg("Exit program")
+end
+
+
